@@ -5,6 +5,7 @@ import { happyPetApi } from '../../api';
 import { useForm } from 'react-hook-form';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { Iusuario } from '../../interfaces';
 
 
 type dataForm = {
@@ -26,13 +27,13 @@ const { register, handleSubmit, setError, formState: { errors } } = useForm<data
 
 const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
     
-    const dataPost = {
+    const dataPost:Iusuario = {
         id:'usuario011',
         nombre,
         apellido,
         correo,
         password,
-        fechacreacion:'10/10/2022',
+        fechaCreacion:'10/10/2022',
         rol:'cliente'
     }
 

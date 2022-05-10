@@ -91,7 +91,7 @@ export const initialData: SeedData = {
             inStock: 5,
             price: 5500,
             sizes: ['XS','S','M','XL','XXL'],
-            slug: "pdt-jgt-00001",
+            slug: "pdt-jgt-00002",
             type: 'juguete',
             tags: ['pelotas'],
             title: "Pelota Squeaker Football",
