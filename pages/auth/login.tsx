@@ -1,10 +1,21 @@
 import NextLink from 'next/link';
 import { Box, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../../components/layouts'
+import { useRouter } from 'next/router';
+
+
 
 const LoginPage = () => {
+const router = useRouter();
+
+const ingresar = () => {
+    router.replace('/');
+}
+
   return (
     <AuthLayout title={'Ingresar'}>
+ 
+
         <Box sx={{ width: 350, padding:'10px 20px' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -19,7 +30,7 @@ const LoginPage = () => {
                 </Grid>
 
                 <Grid item xs={12}>
-                    <Button color="secondary" className='circular-btn' size='large' fullWidth>
+                    <Button onClick={ingresar} color="secondary" className='circular-btn' size='large' fullWidth>
                         Ingresar
                     </Button>
                 </Grid>

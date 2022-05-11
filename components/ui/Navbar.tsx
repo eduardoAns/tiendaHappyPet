@@ -17,17 +17,17 @@ export const Navbar = () => {
             <Box flex={ 1 } />
 
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                <NextLink href='/category/men' passHref>
+                <NextLink href='/' passHref>
                     <Link>
                         <Button>Alimentos</Button>
                     </Link>
                 </NextLink>
-                <NextLink href='/category/women' passHref>
+                <NextLink href='/' passHref>
                     <Link>
                         <Button>Accesorios</Button>
                     </Link>
                 </NextLink>
-                <NextLink href='/category/kid' passHref>
+                <NextLink href='/' passHref>
                     <Link>
                         <Button>Cosmetica</Button>
                     </Link>

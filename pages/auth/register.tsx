@@ -72,14 +72,6 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
 
 }
 
-useEffect(() => {
-    setError('nombre', {
-        type: "manual",
-        message: "No olvides ingresar tu nombre!"
-    });
-  
-}, [setError])
-
   return (
     <AuthLayout title={'Ingresar'}>
         <form onSubmit={handleSubmit(crearUsuario)}>
