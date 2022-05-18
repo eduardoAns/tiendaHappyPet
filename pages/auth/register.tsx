@@ -5,7 +5,7 @@ import { happyPetApi } from '../../api';
 import { useForm } from 'react-hook-form';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { Iusuario } from '../../interfaces';
+import { IUser } from '../../interfaces';
 
 
 type dataForm = {
@@ -27,8 +27,7 @@ const { register, handleSubmit, setError, formState: { errors } } = useForm<data
 
 const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
     
-    const dataPost:Iusuario = {
-        id:'usuario011',
+    const dataPost:IUser = {
         nombre,
         apellido,
         correo,
@@ -41,7 +40,7 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
     try {
         
         console.log(dataPost)
-        const url='http://localhost:8080/api/usuario'
+        const url='https://happypet.herokuapp.com/api/usuario'
         const request = await fetch(url,{
           method:'POST',
           headers:{

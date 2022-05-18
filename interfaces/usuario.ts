@@ -1,5 +1,5 @@
-export interface Iusuario {
-    id: string;
+export interface IUser {
+    id?: string;
     nombre: string;
     apellido: string;
     correo: string;

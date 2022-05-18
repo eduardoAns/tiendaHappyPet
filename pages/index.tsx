@@ -7,6 +7,11 @@ import { ProductList } from '../components/products';
 
 
 const Home: NextPage = () => {
+
+
+
+
+
   return (
     <ShopLayout title={'Tienda HappyPet - Home'} pageDescription={'Encuentra los mejores productos de Teslo aquí'}>
         <Typography variant='h1' component='h1'>Tienda</Typography>

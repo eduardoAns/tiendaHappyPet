@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const happyPetApi = axios.create({
-    baseURL:'/api',
+    baseURL:'http://localhost:8080/api',
     headers:{
         'Accept':'application/json',
         'Content-Type':'application/json'
