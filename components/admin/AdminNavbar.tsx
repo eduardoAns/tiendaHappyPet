@@ -5,11 +5,11 @@ import NextLink from 'next/link';
 import { AppBar, Box, Button, Link, Toolbar, Typography } from '@mui/material';
 
 
-import { UiContext } from '../../context';
+// import { UiContext } from '../../context';
 
 export const AdminNavbar = () => {
 
-    const { toggleSideMenu } = useContext( UiContext );
+    // const { toggleSideMenu } = useContext( UiContext );
     
 
     return (
@@ -24,9 +24,9 @@ export const AdminNavbar = () => {
 
                 <Box flex={ 1 } />
 
-                <Button onClick={ toggleSideMenu }>
+                {/* <Button onClick={ toggleSideMenu }>
                     Menú
-                </Button>
+                </Button> */}
 
             </Toolbar>
         </AppBar>
