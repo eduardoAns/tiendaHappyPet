@@ -86,7 +86,7 @@ const ProductsPage = () => {
             </Button>
         </Box>
 
-         <Grid container className='fadeIn'>
+         {/* <Grid container className='fadeIn'>
             <Grid item xs={12} sx={{ height:650, width: '100%' }}>
                 <DataGrid 
                     rows={ 1 }
@@ -97,7 +97,7 @@ const ProductsPage = () => {
                 />
 
             </Grid>
-        </Grid>
+        </Grid> */}
         
     </AdminLayout>
   )

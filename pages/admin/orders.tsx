@@ -64,7 +64,7 @@ const OrdersPage = () => {
         subTitle={'Mantenimiento de ordenes'}
         icon={ <ConfirmationNumberOutlined /> }
     >
-         <Grid container className='fadeIn'>
+         {/* <Grid container className='fadeIn'>
             <Grid item xs={12} sx={{ height:650, width: '100%' }}>
                 <DataGrid 
                     rows={ 1 }
@@ -75,7 +75,7 @@ const OrdersPage = () => {
                 />
 
             </Grid>
-        </Grid>
+        </Grid> */}
         
     </AdminLayout>
   )
