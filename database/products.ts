@@ -29,7 +29,7 @@ export const initialData: SeedData = {
             ],
             inStock: 5,
             price: 8500,
-            sizes: ['XS','S'],
+            sizes: ['XS'],
             slug: "pdt-jgt-00001",
             type: 'juguete',
             tags: ['hueso'],
