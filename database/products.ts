@@ -27,7 +27,7 @@ export const initialData: SeedData = {
                 'huesocore.jpg',
                 'huesocore_2.jpg',
             ],
-            inStock: 10,
+            inStock: 5,
             price: 8500,
             sizes: ['XS','S'],
             slug: "pdt-jgt-00001",
