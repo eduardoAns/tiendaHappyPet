@@ -54,7 +54,6 @@ export const CartProvider:FC = ({ children }) => {
             tax: subTotal * taxRate,
             total: subTotal * ( taxRate + 1 )
         }
-
         dispatch({ type: '[Cart] - Update order summary', payload: orderSummary });
     }, [state.cart]);
 
@@ -70,7 +69,7 @@ export const CartProvider:FC = ({ children }) => {
 
         //! Nivel Final
         //.some entrega un boolean
-        const productInCart = state.cart.some( p => p.id === product.id );
+        const productInCart = state.cart.some( p => p._id === product._id );
         if ( !productInCart ) return dispatch({ type: '[Cart] - Update products in cart', payload: [...state.cart, product ] })
 
         // const productInCartButDifferentSize = state.cart.some( p => p.id === product.id && p.size === product.size );
@@ -79,7 +78,7 @@ export const CartProvider:FC = ({ children }) => {
         //en este punto, el producto se asegura que si existe
         // Acumular
         const updatedProducts = state.cart.map( p => {
-            if ( p.id !== product.id ) return p;
+            if ( p._id !== product._id ) return p;
 
             // Actualizar la cantidad
             p.quantity += product.quantity;

@@ -5,7 +5,7 @@ import { initialData } from '../../database/products';
 import { ItemCounter } from '../../components/ui/ItemCounter';
 import { useRouter } from 'next/router';
 import { useProducts } from '../../hooks';
-import { ICartProduct, IProduct } from '../../interfaces';
+import { ICartProduct, IProduct, ISize } from '../../interfaces';
 import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useContext, useState } from 'react';
 import { CartContext } from '../../context';
@@ -24,10 +24,10 @@ const ProductPage:NextPage<Props> = ({product}) => {
   const { addProductToCart } = useContext( CartContext )
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
-    id: product._id,
+    _id: product._id,
     image: product.images[0],
     price: product.price,
-    size: undefined,
+    size: product.sizes[0],
     slug: product.slug,
     title: product.title,
     gender: product.gender,
@@ -38,6 +38,13 @@ const ProductPage:NextPage<Props> = ({product}) => {
     setTempCartProduct( currentProduct => ({
       ...currentProduct,
       quantity
+    }));
+  }
+
+  const selectedSize = ( size: ISize ) => {
+    setTempCartProduct( currentProduct => ({
+      ...currentProduct,
+      size
     }));
   }
 
@@ -78,7 +85,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
                 maxValue={ product.inStock > 10 ? 10: product.inStock }
               />
               <SizeSelector 
-                // selectedSize={ product.sizes[2] } 
+                //selectedSize={ product.sizes[0] } 
                 sizes={ product.sizes }
               />
             </Box>

@@ -1,6 +1,6 @@
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
+import { Box, Button, FormControl, Grid, InputLabel, Link, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { ShopLayout } from "../../components/layouts"
-
+import NextLink from 'next/link';
 
 const AddressPage = () => {
   return (
@@ -51,12 +51,15 @@ const AddressPage = () => {
         </Grid>
 
 
-        <Box sx={{ mt: 5 }} display='flex' justifyContent='center'>
-            <Button color="secondary" className="circular-btn" size="large">
-                Revisar pedido
-            </Button>
-        </Box>
-
+        <Box sx={{ mt: 5 }} display='flex' justifyContent='center'>                    
+        <NextLink href='/checkout/summary' passHref>
+            <Link>
+                <Button color="secondary" className="circular-btn" size="large">
+                    Confirmar pedido
+                </Button>
+            </Link>
+        </NextLink>
+        </Box>   
     </ShopLayout>
   )
 }
