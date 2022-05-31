@@ -1,4 +1,5 @@
 interface SeedProduct {
+    id:string;
     description: string;
     images: string[];
     inStock: number;
@@ -22,6 +23,7 @@ interface SeedData {
 export const initialData: SeedData = {
     products: [
         {
+            id:"1",
             description: "Jueguete para morder en forma de hueso.",
             images: [
                 'huesocore.jpg',
@@ -37,6 +39,7 @@ export const initialData: SeedData = {
             gender: 'unisex'
         },
         {
+            id:"2",
             description: "Designed for comfort, the Cybertruck Owl Tee is made from 100% cotton and features our signature Cybertruck icon on the back.",
             images: [
                 'bufanda_naranja.jpg',
@@ -53,6 +56,7 @@ export const initialData: SeedData = {
         },
     
         {
+            id:"3",
             description: "Introducing the Tesla Turbine Collection. Designed for style, comfort and everyday lifestyle, the Men's Turbine Long Sleeve Tee features a subtle, water-based T logo on the left chest and our Tesla wordmark below the back collar. The lightweight material is double-dyed, creating a soft, casual style for ideal wear in any season. Made from 50% cotton and 50% polyester.",
             images: [
                 'cama_rectangular.jpg',
@@ -68,6 +72,7 @@ export const initialData: SeedData = {
             gender: 'men'
         },
         {
+            id:"4",
             description: "Introducing the Tesla Turbine Collection. Designed for style, comfort and everyday lifestyle, the Men's Turbine Short Sleeve Tee features a subtle, water-based Tesla wordmark across the chest and our T logo below the back collar. The lightweight material is double-dyed, creating a soft, casual style for ideal wear in any season. Made from 50% cotton and 50% polyester.",
             images: [
                 'parka_winter_aqua.jpg',
@@ -83,6 +88,7 @@ export const initialData: SeedData = {
             gender: 'men'
         },
         {
+            id:"5",
             description: "Juguete para buscar y recoger de forma activa y saludable.",
             images: [
                 'airdogballamerican.jpg',
@@ -98,6 +104,7 @@ export const initialData: SeedData = {
             gender: 'unisex'
         },
         {
+            id:"6",
             description: "Dispensador de Agua, hecho de plástico de alta calidad, es un dispensador de agua moderno y de primera calidad que proporciona a su gato, perro o animal pequeño agua fresca cuando tiene sed.",
             images: [
                 '100042307_alt_2000.jpg',
@@ -113,6 +120,7 @@ export const initialData: SeedData = {
             gender: 'unisex'
         },
         {
+            id:"7",
             description: "Inspired by our fully integrated home solar and storage system, the Tesla Solar Roof Tee advocates for clean, sustainable energy wherever you go. Designed for fit, comfort and style, the tee features an aerial view of our seamless Solar Roof design on the front with our signature T logo above 'Solar Roof' on the back. Made from 100% Peruvian cotton.",
             images: [
                 'cocodrilo.jpg',
@@ -128,6 +136,7 @@ export const initialData: SeedData = {
             gender: 'men'
         },
         {
+            id:"8",
             description: "Inspired by the world’s most unlimited resource, the Let the Sun Shine Tee highlights our fully integrated home solar and storage system. Designed for fit, comfort and style, the tee features a sunset graphic along with our Tesla wordmark on the front and our signature T logo printed above 'Solar Roof' on the back. Made from 100% Peruvian cotton.",
             images: [
                 'platoblanco.jpg',
@@ -143,6 +152,7 @@ export const initialData: SeedData = {
             gender: 'men'
         },
         {
+            id:"9",
             description: "Designed for fit, comfort and style, the Men's 3D Large Wordmark Tee is made from 100% Peruvian cotton with a 3D silicone-printed Tesla wordmark printed across the chest.",
             images: [
                 'poleron_rojo.jpg',
@@ -158,6 +168,7 @@ export const initialData: SeedData = {
             gender: 'men'
         },
         {
+            id:"10",
             description: "Designed for fit, comfort and style, the Tesla T Logo Tee is made from 100% Peruvian cotton and features a silicone-printed T Logo on the left chest.",
             images: [
                 'dogit_comedero.jpg',

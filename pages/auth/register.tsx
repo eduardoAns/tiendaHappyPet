@@ -1,11 +1,13 @@
 import NextLink from 'next/link';
-import { Box, Button, Grid, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, Grid, Link, TextField, Typography } from '@mui/material';
 import { AuthLayout } from '../../components/layouts'
-import { happyPetApi } from '../../api';
+import { happyPetApi, happyPetApiPrueba } from '../../api';
 import { useForm } from 'react-hook-form';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { IUser } from '../../interfaces';
+import { AuthContext } from '../../context';
+import { ErrorOutline } from '@mui/icons-material';
 
 
 type dataForm = {
@@ -15,19 +17,30 @@ type dataForm = {
     password:string;
 }
 
+type pruebaUsuario = {
+    nombre:string,
+    apellido:string,
+    correo:string,
+    password:string,
+    fechaCreacion:string,
+    rol:string
+}
+
 
 
 const RegisterPage = () => {
 
 const router = useRouter();
 const { register, handleSubmit, setError, formState: { errors } } = useForm<dataForm>();
+const [showMsg, setShowMsg] = useState(false)
+const { registerUser } = useContext( AuthContext );
 
 
 
 
 const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
     
-    const dataPost:IUser = {
+    const dataPost:pruebaUsuario = {
         nombre,
         apellido,
         correo,
@@ -37,49 +50,69 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
     }
 
 
+        // setShowError(false);
+        // const isRegister = await registerUser(dataPost);
+
+        // if ( !isRegister ) {
+        //     setShowError(true);
+        //     setTimeout(() => setShowError(false), 3000);
+        //     return;
+        // }
+
+
+        
+        // // Todo: navegar a la pantalla que el usuario estaba
+        // router.replace('/');
+
+
     try {
         
-        console.log(dataPost)
-        const url='https://happypet.herokuapp.com/api/usuario'
-        const request = await fetch(url,{
-          method:'POST',
-          headers:{
-              'Accept':'application/json',
-              'Content-Type':'application/json',
-          },
-          body:JSON.stringify(dataPost)
-      });
-      console.log(request);
-      console.log('post logrado')  
-      router.replace('/');
+        const request = await happyPetApi.post('/usuario', dataPost);
+        console.log(request);
+        console.log('post logrado');  
+        setShowMsg(true);
+
         
     } catch (error) {
         console.log("error en las credenciales");
        
     }
 
-    // try {
+    // const onRegisterForm = async( {  name, email, password }: FormData ) => {
         
-    //     const res = await happyPetApi.post('/usuario', data);
-    //     console.log(res)
+    //     setShowError(false);
+    //     const isRegister = await registerUser(name, email, password);
+
+    //     if ( hasError ) {
+    //         setShowError(true);
+    //         setErrorMessage( message! );
+    //         setTimeout(() => setShowError(false), 3000);
+    //         return;
+    //     }
         
-    // } catch (error) {
-    //     console.log("error en las credenciales");
-       
+    //     // Todo: navegar a la pantalla que el usuario estaba
+    //     router.replace('/');
+
     // }
+
 
 
 }
 
   return (
-    <AuthLayout title={'Ingresar'}>
+    <AuthLayout title={'Registrar'}>
         <form onSubmit={handleSubmit(crearUsuario)}>
         <Box sx={{ width: 350, padding:'10px 20px' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <Typography variant='h1' component="h1">Crear cuenta</Typography>
                 </Grid>
-
+                <Chip 
+                        label="Usuario registrado correctamente"
+                        color="success"
+                        className="fadeIn"
+                        sx={{display: showMsg? 'flex':'none'}}
+                    />
                 
 
                 <Grid item xs={12}>
@@ -87,15 +120,25 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                         label="Nombre" 
                         variant="filled" 
                         fullWidth
-                        {...register('nombre', { required: true })} />
+                        {...register('nombre', {
+                            required:'Este campo es requerido'
+                        })}
+                        error={!!errors.correo}
+                        helperText={errors.correo?.message} 
+                        />
                     
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField 
+                    <TextField
                         label="Apellido" 
                         variant="filled" 
                         fullWidth 
-                        {...register('apellido', { required: true })}/>
+                        {...register('apellido', {
+                            required:'Este campo es requerido'
+                        })}
+                        error={!!errors.correo}
+                        helperText={errors.correo?.message}
+                        />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField 
@@ -103,7 +146,12 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                         type="email"
                         variant="filled" 
                         fullWidth 
-                        {...register('correo', { required: true })}/>
+                        {...register('correo', {
+                            required:'Este campo es requerido'
+                        })}
+                        error={!!errors.correo}
+                        helperText={errors.correo?.message}
+                        />
                 </Grid>
                 <Grid item xs={12}>
                     <TextField 
@@ -111,7 +159,13 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                         type='password' 
                         variant="filled" 
                         fullWidth 
-                        {...register('password', { required: true })}/>
+                        {...register('password',{
+                            required:'Este campo es requerido',
+                            minLength:{value:4, message:'minimo 4 caracteres'}
+                        })}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        />
                 </Grid>
 
                
@@ -124,7 +178,7 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                         size='large' 
                         type="submit"
                         fullWidth>
-                        Ingresar
+                        Registrar
                     </Button>
                 </Grid>
 

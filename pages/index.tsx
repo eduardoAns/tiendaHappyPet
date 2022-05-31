@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { ShopLayout } from '../components/layouts';
 import { initialData } from '../database/products';
 import { ProductList } from '../components/products';
-import { useProducts } from '../hooks';
+import { useProducts, useProductsPrueba } from '../hooks';
 import { FullScreenLoading } from '../components/ui';
 
 const fetcher = (...args:[key:string]) => fetch(...args).then(res => res.json())
@@ -12,7 +12,7 @@ const fetcher = (...args:[key:string]) => fetch(...args).then(res => res.json())
 const Home: NextPage = () => {
 
 
-  // const { products, isLoading } = useProducts('/productos');
+  const { products, isLoading } = useProductsPrueba('/producto');
    
 
 
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         } */}
 
         <ProductList 
-          products={ initialData.products as any }
+          products={ products }
         /> 
     
 

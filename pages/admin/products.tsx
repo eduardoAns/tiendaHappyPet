@@ -5,7 +5,7 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 
 import { AdminLayout } from '../../components/layouts'
-import { IProduct  } from '../../interfaces';
+import { IProduct, IProductprueba  } from '../../interfaces';
 import useSWR from 'swr';
 
 
@@ -52,21 +52,20 @@ const columns:GridColDef[] = [
 
 const ProductsPage = () => {
 
-    // const { data, error } = useSWR<IProduct[]>('/api/admin/products');
+    const { data, error } = useSWR<IProductprueba[]>('https://happypet.herokuapp.com/api/producto');
 
-    // if ( !data && !error ) return (<></>);
+    if ( !data && !error ) return (<></>);
     
-    // const rows = data!.map( product => ({
-    //     id: product._id,
-    //     img: product.images[0],
-    //     title: product.title,
-    //     gender: product.gender,
-    //     type: product.type,
-    //     inStock: product.inStock,
-    //     price: product.price,
-    //     sizes: product.sizes.join(', '),
-    //     slug: product.slug,
-    // }));
+    const rows = data!.map( product => ({
+        id: product.id,
+        img: `/products/${ product.images[1].src}`, 
+        title: product.title,
+        gender: product.gender,
+        type: product.type,
+        inStock: product.inStock,
+        price: product.price,
+        sizes: product.sizes,
+    }));
 
 
   return (
@@ -86,18 +85,17 @@ const ProductsPage = () => {
             </Button>
         </Box>
 
-         {/* <Grid container className='fadeIn'>
+         <Grid container className='fadeIn'>
             <Grid item xs={12} sx={{ height:650, width: '100%' }}>
                 <DataGrid 
-                    rows={ 1 }
-                    // rows={ rows }
+                    rows={ rows }
                     columns={ columns }
                     pageSize={ 10 }
                     rowsPerPageOptions={ [10] }
                 />
 
             </Grid>
-        </Grid> */}
+        </Grid>
         
     </AdminLayout>
   )

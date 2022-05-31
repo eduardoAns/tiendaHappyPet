@@ -6,7 +6,8 @@ import { useForm } from 'react-hook-form';
 import { happyPetApi } from '../../api';
 import axios from 'axios';
 import { ErrorOutline } from '@mui/icons-material';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../../context';
 
 type FormData = {
     correo:string;
@@ -20,31 +21,53 @@ const LoginPage = () => {
 const { register, handleSubmit, setError, formState: { errors } } = useForm<FormData>();    
 const [showError, setShowError] = useState(false)
 const router = useRouter();
+const { loginUser } = useContext( AuthContext );
 
-const login = async ({correo, password}:FormData) => {
+// const login = async ({correo, password}:FormData) => {
     
-    setShowError(false)
+//     setShowError(false)
 
-    try {
-        const {data} = await happyPetApi.post('/user/login',{correo, password})
-        const {token, user} = data;
-        console.log({token, user})
+//     try {
+//         const {data} = await happyPetApi.post('/user/login',{correo, password})
+//         const {token, user} = data;
+//         console.log({token, user})
 
-    } catch (error) {
-        console.log('error en las credenciales')
+//     } catch (error) {
+//         console.log('error en las credenciales')
+//         setShowError(true);
+//         setTimeout(() => {setShowError(false)}, 3000);
+//     }
+
+
+
+//     router.replace('/');
+// }
+
+const onLoginUser = async( { correo, password }: FormData ) => {
+
+    setShowError(false);
+    console.log(correo, password)
+
+    const isValidLogin = await loginUser( correo, password );
+    console.log(isValidLogin)
+    if ( !isValidLogin ) {
         setShowError(true);
-        setTimeout(() => {setShowError(false)}, 3000);
+        setTimeout(() => setShowError(false), 3000);
+        return;
     }
 
 
 
-    // router.replace('/');
+    // Todo: navegar a la pantalla que el usuario estaba
+    const destination = router.query.p?.toString() || '/';
+    router.replace(destination);
+
 }
 
   return (
     <AuthLayout title={'Ingresar'}>
  
-    <form onSubmit={handleSubmit(login)}>
+    <form onSubmit={handleSubmit(onLoginUser)}>
         <Box sx={{ width: 350, padding:'10px 20px' }}>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -78,7 +101,7 @@ const login = async ({correo, password}:FormData) => {
                         fullWidth 
                         {...register('password',{
                             required:'Este campo es requerido',
-                            minLength:{value:6, message:'minimo 6 caracteres'}
+                            minLength:{value:4, message:'minimo 4 caracteres'}
                         })}
                         error={!!errors.password}
                         helperText={errors.password?.message}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const happyPetApi = axios.create({
-    baseURL:'https://happypet.herokuapp.com/api',
+const happyPetApiPrueba = axios.create({
+    baseURL:'http://localhost:8080/api',
     headers:{
         'Accept':'application/json',
         'Content-Type':'application/json'
@@ -9,4 +9,4 @@ const happyPetApi = axios.create({
 })
 
 
-export default happyPetApi;
+export default happyPetApiPrueba;

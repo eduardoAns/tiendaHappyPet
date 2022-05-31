@@ -2,10 +2,10 @@ import { FC, useMemo, useState } from 'react';
 import NextLink from 'next/link';
 import { Grid, Card, CardActionArea, CardMedia, Box, Typography, Link, Chip } from '@mui/material'
 
-import { IProduct } from '../../interfaces'
+import { IProduct, IProductprueba } from '../../interfaces'
 
 interface Props {
-    product: IProduct;
+    product: IProductprueba;
 }
 
 export const ProductCard: FC<Props> = ({ product }) => {
@@ -15,8 +15,8 @@ export const ProductCard: FC<Props> = ({ product }) => {
 
     const productImage = useMemo(() => {
         return isHovered
-          ? `/products/${ product.images[1] }`
-          : `/products/${ product.images[0] }`;
+          ? `/products/${ product.images[1].src }`
+          : `/products/${ product.images[0].src }`;
 
     }, [isHovered, product.images])
 
@@ -28,7 +28,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
             onMouseLeave={ () => setIsHovered(false) } 
       >
           <Card>
-              <NextLink href={`/product/${product.slug}`} passHref prefetch={ false }>
+              <NextLink href={`/product/${product.id}`} passHref prefetch={ false }>
                 <Link>                
                     <CardActionArea>
                         {

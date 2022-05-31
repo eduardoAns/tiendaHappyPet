@@ -7,11 +7,11 @@ import { ShopLayout } from '../../components/layouts';
 import { ProductList } from '../../components/products';
 
 // import { dbProducts } from '../../database';
-import { IProduct } from '../../interfaces';
+import { IProduct, IProductprueba } from '../../interfaces';
 
 
 interface Props {
-    products: IProduct[];
+    products: IProductprueba[];
     foundProducts: boolean;
     query: string;
 }

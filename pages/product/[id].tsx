@@ -5,10 +5,11 @@ import { initialData } from '../../database/products';
 import { ItemCounter } from '../../components/ui/ItemCounter';
 import { useRouter } from 'next/router';
 import { useProducts } from '../../hooks';
-import { ICartProduct, IProduct, ISize } from '../../interfaces';
+import { ICartProduct, IProduct, IProductprueba, ISize } from '../../interfaces';
 import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useContext, useState } from 'react';
 import { CartContext } from '../../context';
+import { happyPetApi } from '../../api';
 
 interface Props {
   product: IProduct
@@ -164,12 +165,14 @@ const ProductPage:NextPage<Props> = ({product}) => {
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
   
   const productSlugs = initialData.products;
+  // const res = await happyPetApi.get('/producto');
+  // const productTitle= res.data;
 
   
   return {
-    paths: productSlugs.map( ({ slug }) => ({
+    paths: productSlugs.map( ({id}) => ({
       params: {
-        slug
+        id
       }
     })),
     fallback: 'blocking'
@@ -178,8 +181,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   
-  const { slug = '' } = params as { slug: string };
+  const { id = '' } = params as { id: string };
   const product = initialData.products[0];
+  
 
   if ( !product ) {
     return {
@@ -222,7 +226,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 // export const getStaticProps: GetStaticProps = async ({ params }) => {
   
 //   const { slug = '' } = params as { slug: string };
-//   const product = await dbProducts.getProductBySlug( slug );
+//   const product = await dbProducts.getProductBySlug( slug );`url/${slug]}`
 
 //   if ( !product ) {
 //     return {

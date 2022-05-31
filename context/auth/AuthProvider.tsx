@@ -1,10 +1,12 @@
 import { FC, useReducer, useEffect } from 'react';
 import { AuthContext, authReducer } from './';
-// import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 
 import { happyPetApi } from '../../api';
 import { IUser } from '../../interfaces';
+import happyPetApiPrueba from '../../api/happyPetApiPrueba';
+import router from 'next/router';
 
 export interface AuthState {
     isLoggedIn: boolean;
@@ -18,80 +20,92 @@ const AUTH_INITIAL_STATE: AuthState = {
 }
 
 
-// export const AuthProvider:FC = ({ children }) => {
+export const AuthProvider:FC = ({ children }) => {
 
-//     const [state, dispatch] = useReducer( authReducer, AUTH_INITIAL_STATE );
+    const [state, dispatch] = useReducer( authReducer, AUTH_INITIAL_STATE );
 
-//     useEffect(() => {
-//         checkToken();
-//     }, [])
+    // useEffect(() => {
+    //     checkToken();
+    // }, [])
 
-//     const checkToken = async() => {
+    // const checkToken = async() => {
 
-//         try {
-//             const { data } = await happyPetApi.get('/user/validate-token');
-//             const { token, user } = data;
-//             Cookies.set('token', token );
-//             dispatch({ type: '[Auth] - Login', payload: user });
-//         } catch (error) {
-//             Cookies.remove('token');
-//         }
-//     }
+    //     if ( !Cookies.get('token') ) {
+    //         return;
+    //     }
+
+    //     try {
+    //         const { data } = await happyPetApi.get('/user/validate-token');
+    //         const { token, user } = data;
+    //         Cookies.set('token', token );
+    //         dispatch({ type: '[Auth] - Login', payload: user });
+    //     } catch (error) {
+    //         Cookies.remove('token');
+    //     }
+    // }
     
 
 
-//     const loginUser = async( email: string, password: string ): Promise<boolean> => {
+    const loginUser = async( correo: string, password: string ): Promise<boolean> => {
+        
 
-//         try {
-//             const { data } = await happyPetApi.post('/user/login', { email, password });
-//             const { token, user } = data;
-//             Cookies.set('token', token );
-//             dispatch({ type: '[Auth] - Login', payload: user });
-//             return true;
-//         } catch (error) {
-//             return false;
-//         }
+        try {
+            const { data } = await happyPetApi.post('/login', { correo, password });
 
-//     }
+            const { token, user } = data;
+            Cookies.set('token', token.jwt );
+            dispatch({ type: '[Auth] - Login', payload: user });
+            return true;
+        } catch (error) {
+            return false;
+        }
 
-
-//     const registerUser = async( name: string, email: string, password: string ): Promise<{hasError: boolean; message?: string}> => {
-//         try {
-//             const { data } = await happyPetApi.post('/user/register', { name, email, password });
-//             const { token, user } = data;
-//             Cookies.set('token', token );
-//             dispatch({ type: '[Auth] - Login', payload: user });
-//             return {
-//                 hasError: false
-//             }
-
-//         } catch (error) {
-//             if ( axios.isAxiosError(error) ) {
-//                 return {
-//                     hasError: true,
-//                     message: error.response?.data.message
-//                 }
-//             }
-
-//             return {
-//                 hasError: true,
-//                 message: 'No se pudo crear el usuario - intente de nuevo'
-//             }
-//         }
-//     }
+    }
 
 
+    const registerUser = async( dataUser:IUser ): Promise<boolean> => {
+        try {
+            const { data } = await happyPetApi.post('/usuario', dataUser);
+            const { token, user } = data;
+            Cookies.set('token', token.jwt );
+            dispatch({ type: '[Auth] - Login', payload: user });
+            return true
 
-//     return (
-//         <AuthContext.Provider value={{
-//             ...state,
+        } catch (error) {
+            return false
+            // if ( axios.isAxiosError(error) ) {
+            //     return {
+            //         hasError: true,
+            //         message: error.response?.data.message
+            //     }
+            // }
 
-//             // Methods
-//             loginUser,
-//             registerUser,
+            // return {
+            //     hasError: true,
+            //     message: 'No se pudo crear el usuario - intente de nuevo'
+            // }
+        }
+    }
 
-//         }}>
-//             { children }
-//         </AuthContext.Provider>
-//     )
-// };
+    const logout = () => {
+        Cookies.remove('token');
+        Cookies.remove('cart');
+        router.reload();
+    }
+
+
+
+    return (
+        <AuthContext.Provider value={{
+            ...state,
+
+            // Methods
+            loginUser,
+            registerUser,
+            logout,
+
+        }}>
+            { children }
+        </AuthContext.Provider>
+    )
+};

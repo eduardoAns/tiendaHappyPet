@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { ShopLayout } from '../../components/layouts';
 
 import { ProductList } from '../../components/products';
-import { useProducts } from '../../hooks';
+import { useProducts, useProductsPrueba } from '../../hooks';
 
 import { FullScreenLoading } from '../../components/ui';
 import { initialData } from '../../database/products';
@@ -13,7 +13,7 @@ import { initialData } from '../../database/products';
 const ToyPage: NextPage = () => {
 
 
-    // const { products, isLoading } = useProducts('/productos?gender=toy');
+  const { products, isLoading } = useProductsPrueba('/producto/tipo/Juguetes');
    
 
 
@@ -23,15 +23,13 @@ const ToyPage: NextPage = () => {
           <Typography variant='h1' component='h1'>Juguetes</Typography>
           <Typography variant='h2' sx={{ mb: 1 }}>para mas mascotas alegres</Typography>
   
-          {/* {
+          {
             isLoading
               ? <FullScreenLoading />
               : <ProductList products={ products } />
-          } */}
+          }
   
-          <ProductList 
-            products={ initialData.products as any }
-          /> 
+          
       
   
       </ShopLayout>
