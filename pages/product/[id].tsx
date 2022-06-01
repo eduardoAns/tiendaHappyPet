@@ -5,14 +5,14 @@ import { initialData } from '../../database/products';
 import { ItemCounter } from '../../components/ui/ItemCounter';
 import { useRouter } from 'next/router';
 import { useProducts } from '../../hooks';
-import { ICartProduct, IProduct, IProductprueba, ISize } from '../../interfaces';
+import { ICartProduct, IProduct, IProductprueba, ISize, IUser } from '../../interfaces';
 import { GetServerSideProps, GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useContext, useState } from 'react';
 import { CartContext } from '../../context';
 import { happyPetApi } from '../../api';
 
 interface Props {
-  product: IProduct
+  product: IProductprueba
 }
 
 
@@ -25,11 +25,10 @@ const ProductPage:NextPage<Props> = ({product}) => {
   const { addProductToCart } = useContext( CartContext )
 
   const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
-    _id: product._id,
-    image: product.images[0],
+    _id: String(product.id),
+    image: product.images[0].src,
     price: product.price,
     size: product.sizes[0],
-    slug: product.slug,
     title: product.title,
     gender: product.gender,
     quantity: 1,
@@ -165,12 +164,19 @@ const ProductPage:NextPage<Props> = ({product}) => {
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
   
   const productSlugs = initialData.products;
-  // const res = await happyPetApi.get('/producto');
-  // const productTitle= res.data;
+  // const {data} = await happyPetApi.get('/producto');
+  // const productTitle = data.forEach((element:any) => 
+  //   {element.id = String(element.id)
+  //   return element
+  //   }
+  // );
+
+  const productosId = [...Array(20)].map((value, index) => `${index + 1}`)
 
   
+
   return {
-    paths: productSlugs.map( ({id}) => ({
+    paths: productosId.map( (id) => ({  
       params: {
         id
       }
@@ -181,8 +187,12 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   
+
   const { id = '' } = params as { id: string };
-  const product = initialData.products[0];
+
+  const {data} = await happyPetApi.get(`/producto/ ${parseInt(id)}`);
+
+  const product = data
   
 
   if ( !product ) {

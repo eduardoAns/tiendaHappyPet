@@ -5,7 +5,7 @@ import { ISize } from '../../interfaces';
 
 interface Props {
     selectedSize?: ISize;
-    sizes: ISize[];
+    sizes: string;
 }
 
 
@@ -13,15 +13,15 @@ export const SizeSelector: FC<Props> = ({selectedSize, sizes}) => {
   return (
     <Box>
         {
-            sizes.map( size => (
+          
                 <Button
-                    key={ size }
                     size='small'
-                    color={ selectedSize === size ? 'primary' : 'info' }
+                    color='secondary'
+                    variant='outlined'
                 >
-                    { size }
+                    { sizes }
                 </Button>
-            ))
+            
         }
     </Box>
   )

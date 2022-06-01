@@ -8,6 +8,7 @@ import { ProductList } from '../../components/products';
 
 // import { dbProducts } from '../../database';
 import { IProduct, IProductprueba } from '../../interfaces';
+import { happyPetApi } from '../../api';
 
 
 interface Props {
@@ -62,15 +63,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     }
 
     // y no hay productos
-    //let products = await dbProducts.getProductsByTerm( query );
-    let products = initialData.products
+    let {data} = await happyPetApi.get(`/producto/nombre/${query}`);
+    let products = data
+    // let products = initialData.products
     const foundProducts = products.length > 0;
 
     // TODO: retornar otros productos
     if ( !foundProducts ) {
-        // products = await dbProducts.getAllProducts(); 
+        const {data} = await happyPetApi.get(`/producto`);
+        products = data
         // products = await dbProducts.getProductsByTerm('shirt');
-        products = initialData.products;
+        // products = initialData.products;
     }
 
     return {

@@ -2,10 +2,11 @@ import { FC } from 'react';
 import { Slide } from 'react-slideshow-image';
 
 import 'react-slideshow-image/dist/styles.css';
+import { Iimage } from '../../interfaces';
 import styles from './ProductSlideshow.module.css';
 
 interface Props {
-    images: string[]
+    images: Iimage[]
 }
 
 export const ProductSlideshow: FC<Props> = ({ images }) => {
@@ -17,9 +18,9 @@ export const ProductSlideshow: FC<Props> = ({ images }) => {
     >
         {
             images.map( image =>  {
-                const url = `/products/${ image }`;
+                const url = `/products/${ image.src }`;
                 return (
-                    <div className={ styles['each-slide'] } key={ image }>
+                    <div className={ styles['each-slide'] } key={ image.id }>
                         <div style={{
                             backgroundImage: `url(${ url })`,
                             backgroundSize: 'cover'

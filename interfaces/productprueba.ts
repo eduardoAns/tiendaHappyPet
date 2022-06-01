@@ -11,11 +11,10 @@ export interface IProductprueba {
     title: string;
     type: string;
     gender: string;
-    date:string,
-    status:string
+    date:string
 }
 
-interface Iimage {
+export interface Iimage {
     id:number;
     src:string
 }
