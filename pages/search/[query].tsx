@@ -51,7 +51,8 @@ const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     
-    const { query = '' } = params as { query: string };
+    let { query = '' } = params as { query: string };
+    query = query.charAt(0).toUpperCase() + query.slice(1)
 
     if ( query.length === 0 ) {
         return {
