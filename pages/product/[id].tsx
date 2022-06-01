@@ -171,7 +171,7 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
   //   }
   // );
 
-  const productosId = [...Array(20)].map((value, index) => `${index + 1}`)
+  const productosId = [...Array(3)].map((value, index) => `${index + 1}`)
 
   
 
