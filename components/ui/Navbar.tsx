@@ -23,7 +23,7 @@ export const Navbar = () => {
 
 
     return (
-        <AppBar>
+        <AppBar sx={{ bgcolor: 'secondary.light' }}>
             <Toolbar>
                 <NextLink href='/' passHref>
                     <Link display='flex' alignItems='center'>
@@ -38,17 +38,17 @@ export const Navbar = () => {
                     className="fadeIn">                    
                     <NextLink href='/category/toys' passHref>
                         <Link>
-                            <Button color={asPath === '/category/toys'?'primary':'info'}>juguetes</Button>
+                            <Button color={asPath === '/category/toys'?'info':'secondary'}>Juguetes</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/accesories' passHref>
                         <Link>
-                            <Button color={asPath === '/category/accesories'?'primary':'info'}>Accesorios</Button>
+                            <Button color={asPath === '/category/accesories'?'info':'secondary'}>Accesorios</Button>
                         </Link>
                     </NextLink>
                     <NextLink href='/category/cosmetics' passHref>
                         <Link>
-                            <Button color={asPath === '/category/cosmetics'?'primary':'info'}>Cosmetica</Button>
+                            <Button color={asPath === '/category/cosmetics'?'info':'secondary'}>Cosmetica</Button>
                         </Link>
                     </NextLink>
                 </Box>
@@ -111,7 +111,7 @@ export const Navbar = () => {
                 </NextLink>
 
 
-                <Button onClick={toggleSideMenu}>
+                <Button color={'secondary'} onClick={toggleSideMenu}>
                     Menú
                 </Button>
 

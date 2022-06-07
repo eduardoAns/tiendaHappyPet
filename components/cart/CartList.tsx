@@ -4,16 +4,17 @@ import { Box, Button, CardActionArea, CardMedia, Grid, Link, Typography } from '
 
 import { initialData } from '../../database/products';
 import { ItemCounter } from '../ui';
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, IOrderItem } from '../../interfaces';
 import { CartContext } from '../../context';
 
 
 
 interface Props {
     editable?: boolean;
+    products?:IOrderItem[],
 }
 
-export const CartList: FC<Props> = ({ editable = false }) => {
+export const CartList: FC<Props> = ({ editable = false, products }) => {
 
     const { cart, updateCartQuantity, removeCartProduct } = useContext(CartContext);
 
@@ -21,6 +22,8 @@ export const CartList: FC<Props> = ({ editable = false }) => {
         product.quantity = newQuantityValue;
         updateCartQuantity( product );
     }
+
+    const productsToShow = products ? products : cart;
 
     
   return (

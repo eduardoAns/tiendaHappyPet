@@ -15,24 +15,18 @@ export interface IOrder {
 
     isPaid  : boolean;
     paidAt? : string;
-
-    transactionId?: string;
-
-
-    createdAt?: string;
-    updatedAt?: string;
 }
 
 
 export interface IOrderItem {
     _id      : string;
     title    : string;
-    size     : ISize;
+    size     : string;
     quantity : number;
-    slug     : string;
     image    : string;
     price    : number;
     gender   : string;
+
 }
 
 
@@ -41,8 +35,6 @@ export interface ShippingAddress {
     lastName : string;
     address  : string;
     address2?: string;
-    zip      : string;
     city     : string;
-    country  : string;
     phone    : string;
 }

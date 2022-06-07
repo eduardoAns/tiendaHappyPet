@@ -7,6 +7,10 @@ import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { AdminLayout } from '../../components/layouts'
 import { IProduct, IProductprueba  } from '../../interfaces';
 import useSWR from 'swr';
+import { useContext } from 'react';
+import { AuthContext } from '../../context';
+import { happyPetApi, happyPetApiPrueba } from '../../api';
+import { GetServerSideProps } from 'next';
 
 
 const columns:GridColDef[] = [
@@ -15,7 +19,7 @@ const columns:GridColDef[] = [
         headerName: 'Foto',
         renderCell: ({ row }: GridValueGetterParams ) => {
             return (
-                <a href={ `/product/${ row.slug }` } target="_blank" rel="noreferrer">
+                <a href={ `/product/${ row.id }` } target="_blank" rel="noreferrer">
                     <CardMedia 
                         component='img'
                         alt={ row.title }
@@ -32,7 +36,7 @@ const columns:GridColDef[] = [
         width: 250,
         renderCell: ({row}: GridValueGetterParams) => {
             return (
-                <NextLink href={`/admin/products/${ row.slug }`} passHref>
+                <NextLink href={`/admin/products/${ row.id }`} passHref>
                     <Link underline='always'>
                         { row.title}
                     </Link>
@@ -42,7 +46,7 @@ const columns:GridColDef[] = [
     },
     { field: 'gender', headerName: 'Género' },
     { field: 'type', headerName: 'Tipo' },
-    { field: 'inStock', headerName: 'Inventario' },
+    { field: 'inStock', headerName: 'Stock' },
     { field: 'price', headerName: 'Precio' },
     { field: 'sizes', headerName: 'Tallas', width: 250 },
 
@@ -54,7 +58,9 @@ const ProductsPage = () => {
 
     const { data, error } = useSWR<IProductprueba[]>('https://happypet.herokuapp.com/api/producto');
 
+
     if ( !data && !error ) return (<></>);
+
     
     const rows = data!.map( product => ({
         id: product.id,
@@ -70,8 +76,8 @@ const ProductsPage = () => {
 
   return (
     <AdminLayout 
-        title={`Productos`} 
-        // title={`Productos (${ data?.length })`} 
+        // title={`Productos`} 
+        title={`Productos (${ data?.length })`} 
         subTitle={'Mantenimiento de productos'}
         icon={ <CategoryOutlined /> }
     >
@@ -93,12 +99,47 @@ const ProductsPage = () => {
                     pageSize={ 10 }
                     rowsPerPageOptions={ [10] }
                 />
+                
 
             </Grid>
         </Grid>
         
     </AdminLayout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+
+    const { token = '' } = req.cookies;
+
+    let isValidToken = false;
+
+    try {
+        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const {rol} = data
+        console.log(rol)
+
+        if(rol == 'administrador'){
+            isValidToken = true;
+        }
+    } catch (error) {
+        isValidToken = false;
+    }
+
+    if ( !isValidToken ) {
+        return {
+            redirect: {
+                destination: '/auth/login?p=/admin/products',
+                permanent: false,
+            }
+        }
+    }
+
+    return {
+        props: {
+            
+        }
+    }
 }
 
 export default ProductsPage;

@@ -30,7 +30,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
           <Card>
               <NextLink href={`/product/${product.id}`} passHref prefetch={ false }>
                 <Link>                
-                    <CardActionArea>
+                    <CardActionArea >
                         {
                             (product.inStock === 0 ) && (
                                 <Chip 

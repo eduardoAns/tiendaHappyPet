@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { PeopleOutline } from '@mui/icons-material'
 import useSWR from 'swr';
 
@@ -7,7 +7,9 @@ import { Grid, Select, MenuItem } from '@mui/material';
 
 import { AdminLayout } from '../../components/layouts'
 import { IUser } from '../../interfaces';
-import { happyPetApiPrueba } from '../../api';
+import { happyPetApi, happyPetApiPrueba } from '../../api';
+import { AuthContext } from '../../context';
+import { GetServerSideProps } from 'next';
 
 
 
@@ -16,6 +18,7 @@ const UsersPage = () => {
 
     const { data, error } = useSWR<IUser[]>('https://happypet.herokuapp.com/api/usuario');
     const [ users, setUsers ] = useState<IUser[]>([]);
+
 
 
     useEffect(() => {
@@ -27,7 +30,8 @@ const UsersPage = () => {
     console.log(data)
     
 
-    if ( !data && !error ) return (<></>);
+    // if ( !data && !error ) return (<></>)
+
 
     const onRoleUpdated = async( userId: number, newRole: string ) => {
 
@@ -109,6 +113,39 @@ const UsersPage = () => {
 
     </AdminLayout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+
+    const { token = '' } = req.cookies;
+
+    let isValidToken = false;
+
+    try {
+        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const {rol} = data
+
+        if(rol == 'administrador'){
+            isValidToken = true;
+        }
+    } catch (error) {
+        isValidToken = false;
+    }
+
+    if ( !isValidToken ) {
+        return {
+            redirect: {
+                destination: '/auth/login?p=/admin/users',
+                permanent: false,
+            }
+        }
+    }
+
+    return {
+        props: {
+            
+        }
+    }
 }
 
 export default UsersPage

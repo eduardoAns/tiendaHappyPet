@@ -73,7 +73,7 @@ const onLoginUser = async( { correo, password }: FormData ) => {
                 <Grid item xs={12}>
                     <Typography variant='h1' component="h1">Iniciar Sesión</Typography>
                     <Chip 
-                        label="No reconocemos este usuario / coontraseña"
+                        label="No reconocemos este usuario / contraseña"
                         color="error"
                         icon={<ErrorOutline />}
                         className="fadeIn"
@@ -120,7 +120,9 @@ const onLoginUser = async( { correo, password }: FormData ) => {
                 </Grid>
 
                 <Grid item xs={12} display='flex' justifyContent='end'>
-                    <NextLink href="/auth/register" passHref>
+                    <NextLink 
+                        href={ router.query.p ? `/auth/register?p=${ router.query.p }`: '/auth/register' } 
+                        passHref>
                         <Link underline='always'>
                             ¿No tienes cuenta?
                         </Link>

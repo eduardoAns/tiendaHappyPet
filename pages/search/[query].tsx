@@ -52,6 +52,7 @@ const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     
     let { query = '' } = params as { query: string };
+
     query = query.charAt(0).toUpperCase() + query.slice(1)
 
     if ( query.length === 0 ) {
@@ -63,18 +64,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         }
     }
 
-    // y no hay productos
+    
     let {data} = await happyPetApi.get(`/producto/nombre/${query}`);
     let products = data
     // let products = initialData.products
     const foundProducts = products.length > 0;
-
+    // si no hay productos
     // TODO: retornar otros productos
     if ( !foundProducts ) {
         const {data} = await happyPetApi.get(`/producto`);
         products = data
-        // products = await dbProducts.getProductsByTerm('shirt');
-        // products = initialData.products;
     }
 
     return {

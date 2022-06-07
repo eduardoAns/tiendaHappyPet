@@ -24,25 +24,29 @@ export const AuthProvider:FC = ({ children }) => {
 
     const [state, dispatch] = useReducer( authReducer, AUTH_INITIAL_STATE );
 
-    // useEffect(() => {
-    //     checkToken();
-    // }, [])
+    
+    useEffect(() => {
+        checkToken();
+    }, [])
 
-    // const checkToken = async() => {
+    const checkToken = async() => {
 
-    //     if ( !Cookies.get('token') ) {
-    //         return;
-    //     }
+        const Authorization= Cookies.get('token')
 
-    //     try {
-    //         const { data } = await happyPetApi.get('/user/validate-token');
-    //         const { token, user } = data;
-    //         Cookies.set('token', token );
-    //         dispatch({ type: '[Auth] - Login', payload: user });
-    //     } catch (error) {
-    //         Cookies.remove('token');
-    //     }
-    // }
+        if ( !Authorization ) {
+            return;
+        }
+
+        try {
+            const { data } = await happyPetApi.get('/validate-token', {'headers':{'Authorization': Authorization}});
+            const { token, user } = data;
+            Cookies.set('token', token.jwt );
+            dispatch({ type: '[Auth] - Login', payload: user });
+            console.log(data)
+        } catch (error) {
+            Cookies.remove('token');
+        }
+    }
     
 
 
@@ -55,6 +59,7 @@ export const AuthProvider:FC = ({ children }) => {
             const { token, user } = data;
             Cookies.set('token', token.jwt );
             dispatch({ type: '[Auth] - Login', payload: user });
+            console.log(data)
             return true;
         } catch (error) {
             return false;
@@ -63,16 +68,22 @@ export const AuthProvider:FC = ({ children }) => {
     }
 
 
-    const registerUser = async( dataUser:IUser ): Promise<boolean> => {
+    const registerUser = async( dataUser:IUser ): Promise<{hasRegister:boolean; message: string; }> => {
         try {
             const { data } = await happyPetApi.post('/usuario', dataUser);
-            const { token, user } = data;
-            Cookies.set('token', token.jwt );
-            dispatch({ type: '[Auth] - Login', payload: user });
-            return true
+            // const { token, user } = data;
+            // Cookies.set('token', token.jwt );
+            // dispatch({ type: '[Auth] - Login', payload: user });
+            return {
+                hasRegister:true,
+                message: 'Usuario creado exitosamente!'!
+            }
 
         } catch (error) {
-            return false
+            return {
+                hasRegister:false,
+                message: 'Correo en uso, intente con otro'
+            }
             // if ( axios.isAxiosError(error) ) {
             //     return {
             //         hasError: true,
@@ -88,9 +99,19 @@ export const AuthProvider:FC = ({ children }) => {
     }
 
     const logout = () => {
-        Cookies.remove('token');
+
         Cookies.remove('cart');
+        Cookies.remove('firstName');
+        Cookies.remove('lastName');
+        Cookies.remove('address');
+        Cookies.remove('address2');
+        Cookies.remove('city');
+        Cookies.remove('phone');
+        Cookies.remove('token');
         router.reload();
+        
+        
+
     }
 
 

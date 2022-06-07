@@ -9,8 +9,7 @@ import { useProducts, useProductsPrueba } from '../../hooks';
 import { FullScreenLoading } from '../../components/ui';
 import { initialData } from '../../database/products';
 
-
-const CosmeticPage: NextPage = () => {
+const CosmeticPage: NextPage = ( ) => {
 
 
   const { products, isLoading } = useProductsPrueba('/producto/tipo/Cosmetica');
@@ -29,7 +28,6 @@ const CosmeticPage: NextPage = () => {
             : <ProductList products={ products } />
         }
 
-        
     
 
     </ShopLayout>

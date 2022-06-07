@@ -33,7 +33,14 @@ const RegisterPage = () => {
 const router = useRouter();
 const { register, handleSubmit, setError, formState: { errors } } = useForm<dataForm>();
 const [showMsg, setShowMsg] = useState(false)
+const [msg, setMsg] = useState('')
+const [isRegister, setIsRegister] = useState(false)
+
+
 const { registerUser } = useContext( AuthContext );
+
+const tiempoTranscurrido = Date.now();
+const hoy = new Date(tiempoTranscurrido);
 
 
 
@@ -45,54 +52,37 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
         apellido,
         correo,
         password,
-        fechaCreacion:'10/10/2022',
+        fechaCreacion:hoy.toDateString(),
         rol:'cliente'
     }
 
+    setShowMsg(false);
+    const request = await registerUser(dataPost);
+    const { hasRegister, message } = request
 
-        // setShowError(false);
-        // const isRegister = await registerUser(dataPost);
-
-        // if ( !isRegister ) {
-        //     setShowError(true);
-        //     setTimeout(() => setShowError(false), 3000);
-        //     return;
-        // }
-
-
-        
-        // // Todo: navegar a la pantalla que el usuario estaba
-        // router.replace('/');
-
-
-    try {
-        
-        const request = await happyPetApi.post('/usuario', dataPost);
-        console.log(request);
-        console.log('post logrado');  
+    if ( request ) {
         setShowMsg(true);
-
-        
-    } catch (error) {
-        console.log("error en las credenciales");
-       
+        setMsg(message);
+        setIsRegister(hasRegister)
+        setTimeout(() => setShowMsg(false), 5000);
+        return;
     }
+    
+    // Todo: navegar a la pantalla que el usuario estaba
 
-    // const onRegisterForm = async( {  name, email, password }: FormData ) => {
+
+
+    // try {
         
-    //     setShowError(false);
-    //     const isRegister = await registerUser(name, email, password);
+    //     const request = await happyPetApiPrueba.post('/usuario', dataPost);
+    //     console.log(request);
+    //     console.log('post logrado');  
+    //     setShowMsg(true);
 
-    //     if ( hasError ) {
-    //         setShowError(true);
-    //         setErrorMessage( message! );
-    //         setTimeout(() => setShowError(false), 3000);
-    //         return;
-    //     }
         
-    //     // Todo: navegar a la pantalla que el usuario estaba
-    //     router.replace('/');
-
+    // } catch (error) {
+    //     console.log("error en las credenciales");
+       
     // }
 
 
@@ -108,8 +98,8 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                     <Typography variant='h1' component="h1">Crear cuenta</Typography>
                 </Grid>
                 <Chip 
-                        label="Usuario registrado correctamente"
-                        color="success"
+                        label={msg}
+                        color={isRegister?"success":"error"}
                         className="fadeIn"
                         sx={{display: showMsg? 'flex':'none'}}
                     />
@@ -183,7 +173,9 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
                 </Grid>
 
                 <Grid item xs={12} display='flex' justifyContent='end'>
-                    <NextLink href="/auth/login" passHref>
+                    <NextLink 
+                        href={ router.query.p ? `/auth/login?p=${ router.query.p }`: '/auth/login' }
+                        passHref>
                         <Link underline='always'>
                             ¿Ya tienes cuenta?
                         </Link>

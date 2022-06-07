@@ -9,7 +9,7 @@ interface ContextProps {
     user?: IUser;
 
     loginUser: (email: string, password: string) => Promise<boolean>;
-    registerUser: (dataUser:IUser) => Promise<boolean>;
+    registerUser: (dataUser:IUser) => Promise<{hasRegister:boolean; message: string; }>;
     logout: () => void
 }
 

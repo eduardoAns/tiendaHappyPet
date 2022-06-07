@@ -3,6 +3,7 @@ import { AccountCircleOutlined, AdminPanelSettings, CategoryOutlined, Confirmati
 import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { AuthContext, UiContext } from "../../context";
+import Cookies from 'js-cookie';
 
 
 export const SideMenu = () => {
@@ -56,7 +57,7 @@ export const SideMenu = () => {
 
 
                 {
-                    isLoggedIn && (
+                    (isLoggedIn)  && (
                         <>
                             <ListItem button>
                                 <ListItemIcon>
@@ -65,7 +66,7 @@ export const SideMenu = () => {
                                 <ListItemText primary={'Perfil'} />
                             </ListItem>
 
-                            <ListItem button>
+                            <ListItem button onClick={() => navigateTo('/orders/history')}>
                                 <ListItemIcon>
                                     <ConfirmationNumberOutlined/>
                                 </ListItemIcon>
@@ -112,7 +113,7 @@ export const SideMenu = () => {
 
 
                 {
-                    isLoggedIn 
+                    (isLoggedIn) 
                     ? (
                         <ListItem button onClick={logout}>
                             <ListItemIcon>
@@ -138,7 +139,7 @@ export const SideMenu = () => {
                 {/* Admin */}
 
                 {
-                    user?.rol == 'administrador' && (
+                    (user?.rol == 'administrador') && (
                         <>
                             <Divider />
                             <ListSubheader>Panel de administracion</ListSubheader>

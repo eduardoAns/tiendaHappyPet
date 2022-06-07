@@ -1,24 +1,32 @@
 import { FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
 
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
 import { CartContext, cartReducer } from './';
+import { happyPetApi } from '../../api';
 
 export interface CartState {
+    isLoaded:boolean;
     cart: ICartProduct[];
     numberOfItems: number;
     subTotal: number;
     tax: number;
     total: number;
+    shippingAddress?: ShippingAddress;
+
 }
 
 
+
 const CART_INITIAL_STATE: CartState = {
+    isLoaded:false,
     cart: [],
     numberOfItems: 0,
     subTotal: 0,
     tax: 0,
     total: 0,
+    shippingAddress: undefined
+
 }
 
 
@@ -35,6 +43,22 @@ export const CartProvider:FC = ({ children }) => {
             dispatch({ type: '[Cart] - LoadCart from cookies | storage', payload: [] });
         }
     }, []);
+
+    useEffect(() => {
+
+        if ( Cookie.get('firstName')){
+            const shippingAddress = {
+                firstName : Cookie.get('firstName') || '',
+                lastName  : Cookie.get('lastName') || '',
+                address   : Cookie.get('address') || '',
+                address2  : Cookie.get('address2') || '',
+                city      : Cookie.get('city') || '',
+                phone     : Cookie.get('phone') || '',
+            }
+            
+            dispatch({ type:'[Cart] - LoadAddress from Cookies', payload: shippingAddress })
+        }
+    }, [])
 
     
     useEffect(() => {
@@ -97,6 +121,64 @@ export const CartProvider:FC = ({ children }) => {
         dispatch({ type: '[Cart] - Remove product in cart', payload: product });
     }
 
+    const updateAddress = ( address: ShippingAddress ) => {
+        Cookie.set('firstName',address.firstName);
+        Cookie.set('lastName',address.lastName);
+        Cookie.set('address',address.address);
+        Cookie.set('address2',address.address2 || '');
+        Cookie.set('city',address.city);
+        Cookie.set('phone',address.phone);
+
+        dispatch({ type: '[Cart] - Update Address', payload: address });
+    }
+
+    const createOrder = async():Promise<{hasError:boolean; message: string; }> => {
+
+        if ( !state.shippingAddress ) {
+            throw new Error('No hay dirección de entrega');
+        }
+
+        const body: IOrder = {
+            orderItems: state.cart.map( p => ({
+                ...p,
+                size: p.size!
+            })),
+            shippingAddress: state.shippingAddress,
+            numberOfItems: state.numberOfItems,
+            subTotal: state.subTotal,
+            tax: state.tax,
+            total: state.total,
+            isPaid: false
+        }
+
+
+        try {
+            
+            const { data } = await happyPetApi.post<IOrder>('/orders', body);
+
+            dispatch({ type: '[Cart] - Order complete' });
+
+            return {
+                hasError:false,
+                message: data._id!
+            }
+
+
+        } catch (error) {
+            // if ( axios.isAxiosError(error) ) {
+            //     return {
+            //         hasError: true,
+            //         message: error.response?.data.message
+            //     }
+            // }
+            return {
+                hasError: true,
+                message : 'error al realizar pago'
+            }
+        }
+
+    }
+
 
     return (
         <CartContext.Provider value={{
@@ -106,6 +188,9 @@ export const CartProvider:FC = ({ children }) => {
             addProductToCart,
             removeCartProduct,
             updateCartQuantity,
+            updateAddress,
+            // Orders
+            createOrder,
         }}>
             { children }
         </CartContext.Provider>
