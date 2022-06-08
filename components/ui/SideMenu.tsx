@@ -171,7 +171,7 @@ export const SideMenu = () => {
 
                             <ListItem 
                                 button
-                                onClick={ () => onSubmit('/admin/products') }
+                                onClick={ () => navigateTo('/admin/products') }
                                 >
                                 <ListItemIcon>
                                     <CategoryOutlined/>
