@@ -38,8 +38,7 @@ const AddressPage = () => {
         defaultValues: getAddressFromCookies() 
      });
 
-     const {user} = useContext(AuthContext);
-     if ( !user) return (<></>)   
+
 
     useEffect(() => {
         reset(getAddressFromCookies() );
@@ -51,6 +50,9 @@ const AddressPage = () => {
         updateAddress( data );
         router.push('/checkout/summary');
     }
+
+    const {user} = useContext(AuthContext);
+    if ( !user) return (<></>)   
         
   return (
     <ShopLayout title="Dirección" pageDescription="Confirmar dirección del destino">
