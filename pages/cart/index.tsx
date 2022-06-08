@@ -5,6 +5,8 @@ import { CartList, OrderSummary } from '../../components/cart';
 import { useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { CartContext } from '../../context';
+import Cookies from "js-cookie";
+import { happyPetApi } from '../../api';
 
 const CartPage = () => {
 
@@ -19,7 +21,23 @@ const CartPage = () => {
     
     if ( !isLoaded || cart.length === 0 ) {
         return (<></>);
-    }    
+    }
+    
+    const onSubmit = async( ) => {
+
+        const token = Cookies.get("token")
+
+        try {
+        const {data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token!}})
+        console.log(data)    
+        router.push('/checkout/summary');
+    
+        } catch (error) {
+            router.push('/auth/login?p=/checkout/address') 
+        }
+
+
+    }
 
 
   return (
@@ -43,7 +61,8 @@ const CartPage = () => {
                                 color="secondary"
                                 className='circular-btn' 
                                 fullWidth
-                                href='/checkout/address'
+                                // href='/checkout/address'
+                                onClick={onSubmit} 
                             >
                                 Checkout
                             </Button>

@@ -89,6 +89,7 @@ const crearUsuario = async ({nombre,apellido,correo,password}:dataForm) => {
 
 }
 
+
   return (
     <AuthLayout title={'Registrar'}>
         <form onSubmit={handleSubmit(crearUsuario)}>

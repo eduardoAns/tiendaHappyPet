@@ -3,7 +3,7 @@ import { ShopLayout } from "../../components/layouts"
 import NextLink from 'next/link';
 import { GetServerSideProps } from "next";
 import router, { useRouter } from "next/router";
-import { CartContext } from "../../context";
+import { AuthContext, CartContext } from "../../context";
 import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Cookies from "js-cookie";
@@ -38,7 +38,10 @@ const AddressPage = () => {
         defaultValues: getAddressFromCookies() 
      });
 
-     useEffect(() => {
+     const {user} = useContext(AuthContext);
+     if ( !user) return (<></>)   
+
+    useEffect(() => {
         reset(getAddressFromCookies() );
 
     }, [reset])
@@ -148,37 +151,42 @@ const AddressPage = () => {
 
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
-    const { token = '' } = req.cookies;
+//     const { token = '' } = req.cookies;
 
-    let isValidToken = false;
+//     let isValidToken = false;
 
-    try {
-        const request =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+//     try {
+//         const request =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
 
-        // await happyPetApi.get('/validate-token', {'headers':{'Authorization': token}})
-        if(request){
-            isValidToken = true;
-        }
-    } catch (error) {
-        isValidToken = false;
-    }
+//         // await happyPetApi.get('/validate-token', {'headers':{'Authorization': token}})
+//         if(request){
+//             isValidToken = true;
+//         }
+//         console.log(isValidToken)
 
-    if ( !isValidToken ) {
-        return {
-            redirect: {
-                destination: '/auth/login?p=/checkout/address',
-                permanent: false,
-            }
-        }
-    }
+//     } catch (error) {
+//         isValidToken = false;
+//         console.log(isValidToken)
 
-    return {
-        props: {
+//     }
+
+//     if ( !isValidToken ) {
+//         console.log(isValidToken)
+//         return {
+//             redirect: {
+//                 destination: '/auth/login?p=/checkout/address',
+//                 permanent: false,
+//             }
+//         }
+//     }
+
+//     return {
+//         props: {
             
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export default AddressPage

@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 import { AuthContext, UiContext } from "../../context";
 import Cookies from 'js-cookie';
+import { happyPetApi } from "../../api";
 
 
 export const SideMenu = () => {
@@ -22,6 +23,29 @@ export const SideMenu = () => {
     const navigateTo = ( url: string ) => {
         toggleSideMenu();
         router.push(url);
+    }
+
+
+    const onSubmit = async( url: string ) => {
+
+        const token = Cookies.get("token")
+
+        try {
+        const {data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token!}})
+        const{rol} = data
+
+        if(rol != "administrador"){
+            router.push(`/auth/login?p=${url}`) 
+            
+        }
+        console.log(data)    
+        router.push(url)
+    
+        } catch (error) {
+            router.push(`/auth/login?p=${url}`) 
+        }
+
+
     }
 
   return (
@@ -145,7 +169,10 @@ export const SideMenu = () => {
                             <ListSubheader>Panel de administracion</ListSubheader>
 
 
-                            <ListItem button>
+                            <ListItem 
+                                button
+                                onClick={ () => onSubmit('/admin/products') }
+                                >
                                 <ListItemIcon>
                                     <CategoryOutlined/>
                                 </ListItemIcon>
@@ -160,7 +187,7 @@ export const SideMenu = () => {
 
                             <ListItem
                                 button
-                                onClick={ () => navigateTo(`/admin/users`) }
+                                onClick={ () => onSubmit('/admin/users') }
                                 >
                                 <ListItemIcon>
                                     <AdminPanelSettings/>

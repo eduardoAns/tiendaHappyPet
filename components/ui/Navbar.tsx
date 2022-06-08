@@ -27,8 +27,8 @@ export const Navbar = () => {
             <Toolbar>
                 <NextLink href='/' passHref>
                     <Link display='flex' alignItems='center'>
-                        <Typography variant='h6'>HappyPet |</Typography>
-                        <Typography sx={{ ml: 0.5 }}>Tienda</Typography>
+                        <Typography color='white' variant='h6'>HappyPet |</Typography>
+                        <Typography color='white' sx={{ ml: 0.5 }}>Tienda</Typography>
                     </Link>  
                 </NextLink>
 
@@ -61,7 +61,9 @@ export const Navbar = () => {
                     isSearchVisible 
                         ? (
                             <Input
-                                sx={{ display: { xs: 'none', sm: 'flex' } }}
+                                
+                                color='info'
+                                sx={{ display: { xs: 'none', sm: 'flex' } } }
                                 className='fadeIn'
                                 autoFocus
                                 value={ searchTerm }
@@ -73,8 +75,11 @@ export const Navbar = () => {
                                     <InputAdornment position="end">
                                         <IconButton
                                             onClick={ () => setIsSearchVisible(false) }
+                                            
                                         >
-                                            <ClearOutlined />
+                                            <ClearOutlined 
+                                                color='info'
+                                            />
                                         </IconButton>
                                     </InputAdornment>
                                 }
@@ -87,7 +92,8 @@ export const Navbar = () => {
                             className="fadeIn"
                             sx={{ display: { xs: 'none', sm: 'flex' } }}
                         >
-                            <SearchOutlined />
+                            <SearchOutlined
+                                color='info' />
                         </IconButton>
                     )
                 }
@@ -97,14 +103,16 @@ export const Navbar = () => {
                     sx={{ display: { xs: 'flex', sm: 'none' } }}
                     onClick={ toggleSideMenu }
                 >
-                    <SearchOutlined />
+                    <SearchOutlined 
+                        color='info'/>
                 </IconButton>
 
                 <NextLink href="/cart" passHref>
                     <Link>
                         <IconButton>
                             <Badge badgeContent={ numberOfItems > 9 ? '+9': numberOfItems } color="secondary">
-                                <ShoppingCartOutlined />
+                                <ShoppingCartOutlined 
+                                color='info'/>
                             </Badge>
                         </IconButton>
                     </Link>

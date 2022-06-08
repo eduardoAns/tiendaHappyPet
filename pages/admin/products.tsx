@@ -1,10 +1,10 @@
 import NextLink from 'next/link';
 import { AddOutlined, CategoryOutlined } from '@mui/icons-material';
-import { Box, Button, CardMedia, Grid, Link } from '@mui/material'
+import { Box, Button, CardMedia, Grid, Link, Typography } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
 
-import { AdminLayout } from '../../components/layouts'
+import { AdminLayout, ShopLayout } from '../../components/layouts'
 import { IProduct, IProductprueba  } from '../../interfaces';
 import useSWR from 'swr';
 import { useContext } from 'react';
@@ -57,9 +57,24 @@ const columns:GridColDef[] = [
 const ProductsPage = () => {
 
     const { data, error } = useSWR<IProductprueba[]>('https://happypet.herokuapp.com/api/producto');
+    const {user} = useContext(AuthContext);
+    if ( user?.rol != "administrador") return (<>
+        <ShopLayout title='Pagina no encontrada' pageDescription='No hay nada que mostrar aquí'>
+            <Box 
+                display='flex' 
+                justifyContent='center' 
+                alignItems='center' 
+                height='calc(100vh - 200px)'
+                sx={{ flexDirection: { xs: 'column', sm: 'row' }}}
+            >
+                <Typography variant='h1' component='h1' fontSize={80} fontWeight={200}>404 |</Typography>
+                <Typography marginLeft={2}>No encontramos ninguna página aquí</Typography>
+            </Box>
+        </ShopLayout>
+        
+    </>)
 
-
-    if ( !data && !error ) return (<></>);
+    // if ( !data && !error ) return (<></>);
 
     
     const rows = data!.map( product => ({
@@ -108,38 +123,38 @@ const ProductsPage = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
-    const { token = '' } = req.cookies;
+//     const { token = '' } = req.cookies;
 
-    let isValidToken = false;
+//     let isValidToken = false;
 
-    try {
-        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
-        const {rol} = data
-        console.log(rol)
+//     try {
+//         const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+//         const {rol} = data
+//         console.log(rol)
 
-        if(rol == 'administrador'){
-            isValidToken = true;
-        }
-    } catch (error) {
-        isValidToken = false;
-    }
+//         if(rol == 'administrador'){
+//             isValidToken = true;
+//         }
+//     } catch (error) {
+//         isValidToken = false;
+//     }
 
-    if ( !isValidToken ) {
-        return {
-            redirect: {
-                destination: '/auth/login?p=/admin/products',
-                permanent: false,
-            }
-        }
-    }
+//     if ( !isValidToken ) {
+//         return {
+//             redirect: {
+//                 destination: '/auth/login?p=/admin/products',
+//                 permanent: false,
+//             }
+//         }
+//     }
 
-    return {
-        props: {
+//     return {
+//         props: {
             
-        }
-    }
-}
+//         }
+//     }
+// }
 
 export default ProductsPage;
