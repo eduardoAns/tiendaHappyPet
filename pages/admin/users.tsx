@@ -18,7 +18,7 @@ const UsersPage = () => {
 
     const { data, error } = useSWR<IUser[]>('https://happypet.herokuapp.com/api/usuario');
     const [ users, setUsers ] = useState<IUser[]>([]);
-    const {user} = useContext(AuthContext);
+    // const {user} = useContext(AuthContext);
 
 
 
@@ -31,21 +31,21 @@ const UsersPage = () => {
     console.log(data)
     
 
-    if ( user?.rol != "administrador") return (<>
-    <ShopLayout title='Pagina no encontrada' pageDescription='No hay nada que mostrar aquí'>
-        <Box 
-            display='flex' 
-            justifyContent='center' 
-            alignItems='center' 
-            height='calc(100vh - 200px)'
-            sx={{ flexDirection: { xs: 'column', sm: 'row' }}}
-        >
-            <Typography variant='h1' component='h1' fontSize={80} fontWeight={200}>404 |</Typography>
-            <Typography marginLeft={2}>No encontramos ninguna página aquí</Typography>
-        </Box>
-    </ShopLayout>
+    // if ( user?.rol != "administrador") return (<>
+    // <ShopLayout title='Pagina no encontrada' pageDescription='No hay nada que mostrar aquí'>
+    //     <Box 
+    //         display='flex' 
+    //         justifyContent='center' 
+    //         alignItems='center' 
+    //         height='calc(100vh - 200px)'
+    //         sx={{ flexDirection: { xs: 'column', sm: 'row' }}}
+    //     >
+    //         <Typography variant='h1' component='h1' fontSize={80} fontWeight={200}>404 |</Typography>
+    //         <Typography marginLeft={2}>No encontramos ninguna página aquí</Typography>
+    //     </Box>
+    // </ShopLayout>
     
-    </>)
+    // </>)
 
 
     const onRoleUpdated = async( userId: number, newRole: string ) => {
@@ -130,37 +130,37 @@ const UsersPage = () => {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
-//     const { token = '' } = req.cookies;
+    const { token = '' } = req.cookies;
 
-//     let isValidToken = false;
+    let isValidToken = false;
 
-//     try {
-//         const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
-//         const {rol} = data
+    try {
+        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const {rol} = data
 
-//         if(rol == 'administrador'){
-//             isValidToken = true;
-//         }
-//     } catch (error) {
-//         isValidToken = false;
-//     }
+        if(rol == 'administrador'){
+            isValidToken = true;
+        }
+    } catch (error) {
+        isValidToken = false;
+    }
 
-//     if ( !isValidToken ) {
-//         return {
-//             redirect: {
-//                 destination: '/auth/login?p=/admin/users',
-//                 permanent: false,
-//             }
-//         }
-//     }
+    if ( !isValidToken ) {
+        return {
+            redirect: {
+                destination: '/auth/login?p=/admin/users',
+                permanent: false,
+            }
+        }
+    }
 
-//     return {
-//         props: {
+    return {
+        props: {
             
-//         }
-//     }
-// }
+        }
+    }
+}
 
 export default UsersPage

@@ -51,8 +51,8 @@ const AddressPage = () => {
         router.push('/checkout/summary');
     }
 
-    const {user} = useContext(AuthContext);
-    if ( !user) return (<></>)   
+    // const {user} = useContext(AuthContext);
+    // if ( !user) return (<></>)   
         
   return (
     <ShopLayout title="Dirección" pageDescription="Confirmar dirección del destino">
@@ -153,42 +153,42 @@ const AddressPage = () => {
 
 // You should use getServerSideProps when:
 // - Only if you need to pre-render a page whose data must be fetched at request time
-// export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
-//     const { token = '' } = req.cookies;
+    const { token = '' } = req.cookies;
 
-//     let isValidToken = false;
+    let isValidToken = false;
 
-//     try {
-//         const request =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+    try {
+        const request =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
 
-//         // await happyPetApi.get('/validate-token', {'headers':{'Authorization': token}})
-//         if(request){
-//             isValidToken = true;
-//         }
-//         console.log(isValidToken)
+        // await happyPetApi.get('/validate-token', {'headers':{'Authorization': token}})
+        if(request){
+            isValidToken = true;
+        }
+        console.log(isValidToken)
 
-//     } catch (error) {
-//         isValidToken = false;
-//         console.log(isValidToken)
+    } catch (error) {
+        isValidToken = false;
+        console.log(isValidToken)
 
-//     }
+    }
 
-//     if ( !isValidToken ) {
-//         console.log(isValidToken)
-//         return {
-//             redirect: {
-//                 destination: '/auth/login?p=/checkout/address',
-//                 permanent: false,
-//             }
-//         }
-//     }
+    if ( !isValidToken ) {
+        console.log(isValidToken)
+        return {
+            redirect: {
+                destination: '/auth/login?p=/checkout/address',
+                permanent: false,
+            }
+        }
+    }
 
-//     return {
-//         props: {
+    return {
+        props: {
             
-//         }
-//     }
-// }
+        }
+    }
+}
 
 export default AddressPage

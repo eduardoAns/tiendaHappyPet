@@ -15,11 +15,11 @@ const AccesoriePage: NextPage = () => {
 
 
   const { products, isLoading } = useProductsPrueba('/producto/tipo/Accesorios');
-    
 
 
 
     return (
+      
       <ShopLayout title={'Tienda HappyPet - Accesorios'} pageDescription={'Encuentra los mejores accesorios para mascotas aquí'}>
           <Typography variant='h1' component='h1'>Accesorios</Typography>
           <Typography variant='h2' sx={{ mb: 1 }}>Para mascotas</Typography>
