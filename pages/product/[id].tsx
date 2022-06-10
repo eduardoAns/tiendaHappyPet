@@ -163,7 +163,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
 // getStaticPaths....
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
   
-  const productSlugs = initialData.products;
+  // const productSlugs = initialData.products;
   // const {data} = await happyPetApi.get('/producto');
   // const productTitle = data.forEach((element:any) => 
   //   {element.id = String(element.id)

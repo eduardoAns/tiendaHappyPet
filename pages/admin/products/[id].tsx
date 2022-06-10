@@ -7,40 +7,39 @@ import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, 
 import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons-material';
 
 import { AdminLayout } from '../../../components/layouts'
-import { IProduct } from '../../../interfaces';
+import { Iimage, IProduct, IProductprueba } from '../../../interfaces';
 // import { dbProducts } from '../../../database';
 import { happyPetApi } from '../../../api';
 
 
 const validTypes  = ['Juguetes','Cosmeticos','Accesorios']
-const validGender = ['Masculino','Femenino','unisex']
-const validSizes = ['XS','S','M','L','XL']
+const validGender = ['M','F','U']
+const validSizes = ['XS','S','M','L','XL','U']
 
 
 interface FormData {
-    _id?       : string;
+    id?: number;
     description: string;
-    images     : string[];
-    inStock    : number;
-    price      : number;
-    sizes      : string[];
-    slug       : string;
-    tags       : string[];
-    title      : string;
-    type       : string;
-    gender     : string;
+    images: Iimage[];
+    inStock: number;
+    price: number;
+    sizes: string;
+    tags: string;
+    title: string;
+    type: string;
+    gender: string;
+    date:string
 }
 
 
 interface Props {
-    product: IProduct;
+    product: IProductprueba;
 }
 
 const ProductAdminPage:FC<Props> = ({ product }) => {
 
     const router = useRouter();
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const [ newTagValue, setNewTagValue ] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
     const { register, handleSubmit, formState:{ errors }, getValues, setValue, watch } = useForm<FormData>({
@@ -64,98 +63,71 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
     
 
 
-
-    const onChangeSize = ( size: string ) => {
-        const currentSizes = getValues('sizes');
-        if ( currentSizes.includes( size ) ) {
-            return setValue('sizes', currentSizes.filter( s => s !== size ), { shouldValidate: true } );
-        }
-
-        setValue('sizes', [ ...currentSizes, size ], { shouldValidate: true });
-
-    }
-
-
-    const onNewTag = () => {
-        const newTag = newTagValue.trim().toLocaleLowerCase();
-        setNewTagValue('');
-        const currentTags = getValues('tags');
-
-        if ( currentTags.includes(newTag) ) {
+    const onFilesSelected = async({ target }: ChangeEvent<HTMLInputElement>) => {
+        if ( !target.files || target.files.length === 0 ) {
             return;
         }
 
-        currentTags.push(newTag);
-    }
-
-    const onDeleteTag = ( tag: string ) => {
-        const updatedTags = getValues('tags').filter( t => t !== tag );
-        setValue('tags', updatedTags, { shouldValidate: true });
-    }
-
-    const onFilesSelected = async({ target }: ChangeEvent<HTMLInputElement>) => {
-        // if ( !target.files || target.files.length === 0 ) {
-        //     return;
-        // }
-
-        // try {
+        console.log(target.files)
+        try {
             
-        //     // console.log( file );
-        //     for( const file of target.files ) {
-        //         const formData = new FormData();
-        //         formData.append('file', file);
-        //         const { data } = await tesloApi.post<{ message: string}>('/admin/upload', formData);
-        //         setValue('images', [...getValues('images'), data.message], { shouldValidate: true });
-        //     }
+            // console.log( file );
+            for( const file of target.files ) {
+                const formData = new FormData();
+                console.log(file)
+                formData.append('file', file);
+                // const { data } = await happyPetApi.post('/producto/upload', formData);
+                // setValue(`images`, [...getValues('images'), data.message], { shouldValidate: true });
+            }
 
 
-        // } catch (error) {
-        //     console.log({ error });
-        // }
+        } catch (error) {
+            console.log({ error });
+        }
     }
 
     const onDeleteImage = ( image: string) =>{
-        setValue(
-            'images', 
-            getValues('images').filter( img => img !== image ),
-            { shouldValidate: true }
-        );
+        // setValue(
+        //     'images', 
+        //     getValues('images').filter( img => img !== image ),
+        //     { shouldValidate: true }
+        // );
     }
 
 
 
     const onSubmit = async( form: FormData ) => {
         
-        // if ( form.images.length < 2 ) return alert('Mínimo 2 imagenes');
-        // setIsSaving(true);
+        if ( form.images.length < 2 ) return alert('Mínimo 2 imagenes');
+        setIsSaving(true);
 
-        // try {
-        //     const { data } = await happyPetApi({
-        //         url: '/admin/products',
-        //         method: form._id ? 'PUT': 'POST',  // si tenemos un _id, entonces actualizar, si no crear
-        //         data: form
-        //     });
+        try {
+            const { data } = await happyPetApi({
+                url: '/admin/products',
+                method: form.id ? 'PUT': 'POST',  // si tenemos un _id, entonces actualizar, si no crear
+                data: form
+            });
 
-        //     console.log({data});
-        //     if ( !form._id ) {
-        //         router.replace(`/admin/products/${ form.slug }`);
-        //     } else {
-        //         setIsSaving(false)
-        //     }
+            console.log({data});
+            if ( !form.id ) {
+                router.replace(`/admin/products/${ form.id }`);
+            } else {
+                setIsSaving(false)
+            }
 
 
-        // } catch (error) {
-        //     console.log(error);
-        //     setIsSaving(false);
-        // }
+        } catch (error) {
+            console.log(error);
+            setIsSaving(false);
+        }
 
     }
 
     return (
         <AdminLayout 
             title={'Producto'} 
-            // subTitle={`Editando: ${ product.title }`}
-            subTitle={`Editando: Hueso corestore`}
+            subTitle={`Editando: ${ product.title }`}
+            // subTitle={`Editando: Hueso corestore`}
             icon={ <DriveFileRenameOutline /> }
         >
             <form onSubmit={ handleSubmit( onSubmit ) }>
@@ -275,6 +247,8 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             <FormLabel>Tallas</FormLabel>
                                 <RadioGroup
                                     row
+                                    value={ getValues('sizes') }
+                                    onChange={ ({ target })=> setValue('sizes', target.value, { shouldValidate: true }) }
                                 >
 
                                 {
@@ -292,19 +266,6 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
  
                         </FormGroup>
 
-                        {/* <FormGroup>
-                            <FormLabel>Tallas</FormLabel>
-                            {
-                                validSizes.map(size => (
-                                    <FormControlLabel
-                                        key={size}
-                                        control={ <Checkbox checked={ getValues('sizes').includes(size) } />} 
-                                        label={ size } 
-                                        onChange={ () => onChangeSize( size )  }
-                                    />
-                                ))
-                            }
-                        </FormGroup> */}
 
                     </Grid>
 
@@ -315,48 +276,15 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             variant="filled"
                             fullWidth
                             sx={{ mb: 1 }}
-                            { ...register('slug', {
+                            { ...register('tags', {
                                 required: 'Este campo es requerido',
-                                validate: (val) => val.trim().includes(' ') ? 'No puede tener espacios en blanco':undefined
+                                // validate: (val) => val.trim().includes(' ') ? 'No puede tener espacios en blanco':undefined
                             })}
-                            error={ !!errors.slug }
-                            helperText={ errors.slug?.message }
+                            error={ !!errors.tags }
+                            helperText={ errors.tags?.message }
                         />
 
-                        {/* <TextField
-                            label="Etiquetas"
-                            variant="filled"
-                            fullWidth 
-                            sx={{ mb: 1 }}
-                            helperText="Presiona [spacebar] para agregar"
-                            value={ newTagValue }
-                            onChange={ ({ target }) => setNewTagValue(target.value) }
-                            onKeyUp={ ({ code })=> code === 'Space' ? onNewTag() : undefined }
-                        />
                         
-                        <Box sx={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            listStyle: 'none',
-                            p: 0,
-                            m: 0,
-                        }}
-                        component="ul">
-                            {
-                                getValues('tags').map((tag) => {
-
-                                return (
-                                    <Chip
-                                        key={tag}
-                                        label={tag}
-                                        onDelete={ () => onDeleteTag(tag)}
-                                        color="primary"
-                                        size='small'
-                                        sx={{ ml: 1, mt: 1}}
-                                    />
-                                );
-                            })}
-                        </Box> */}
 
                         <Divider sx={{ my: 2  }}/>
                         
@@ -375,35 +303,35 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                 ref={ fileInputRef }
                                 type="file"
                                 multiple
-                                accept='image/png, image/gif, image/jpeg'
+                                accept='image/jpg, image/gif, image/jpeg'
                                 style={{ display: 'none' }}
                                 onChange={ onFilesSelected }
                             />
 
 
-                            {/* <Chip 
+                            <Chip 
                                 label="Es necesario al 2 imagenes"
                                 color='error'
                                 variant='outlined'
-                                sx={{ display: getValues('images').length < 2 ? 'flex': 'none' }}
-                            /> */}
+                                // sx={{ display: getValues('images').length < 2 ? 'flex': 'none' }}
+                            />
 
-                            {/* <Grid container spacing={2}>
+                            <Grid container spacing={2}>
                                 {
-                                    getValues('images').map( img => (
-                                        <Grid item xs={4} sm={3} key={img}>
+                                    getValues('images').map( ({src}) => (
+                                        <Grid item xs={4} sm={3} key={src}>
                                             <Card>
                                                 <CardMedia 
                                                     component='img'
                                                     className='fadeIn'
-                                                    image={ img }
-                                                    alt={ img }
+                                                    image={ `/products/${ src }` }
+                                                    alt={ src }
                                                 />
                                                 <CardActions>
                                                     <Button 
                                                         fullWidth 
                                                         color="error"
-                                                        onClick={()=> onDeleteImage(img)}
+                                                        // onClick={()=> onDeleteImage(img.src)}
                                                     >
                                                         Borrar
                                                     </Button>
@@ -412,7 +340,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                         </Grid>
                                     ))
                                 }
-                            </Grid> */}
+                            </Grid>
 
                         </Box>
 
@@ -428,39 +356,55 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 
 
-// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     
-//     const { slug = ''} = query;
-    
-//     let product: IProduct | null;
+    const { id = '' } = query as { id: string };
+    let product: IProductprueba | null;
 
-//     if ( slug === 'new' ) {
-//         // crear un producto
-//         const tempProduct = JSON.parse( JSON.stringify( new Product() ) );
-//         delete tempProduct._id;
-//         tempProduct.images = ['img1.jpg','img2.jpg'];
-//         product = tempProduct;
+    if ( id === 'new' ) {
+        // crear un producto
+        const tempProduct: IProductprueba = {
+            description: "",
+            images: [{src:"img1.jpg"},{src:"img2.jpg"}],
+            inStock: 0,
+            price: 0,
+            sizes: "",
+            tags: "",
+            title: "",
+            type: "",
+            gender: "",
+            date:"",
+        }
 
-//     } else {
-//         product = await dbProducts.getProductBySlug(slug.toString());
-//     }
-
-//     if ( !product ) {
-//         return {
-//             redirect: {
-//                 destination: '/admin/products',
-//                 permanent: false,
-//             }
-//         }
-//     }
+        product = tempProduct
     
 
-//     return {
-//         props: {
-//             product
-//         }
-//     }
-// }
+    } else {
+        const {data} = await happyPetApi.get(`/producto/ ${parseInt(id)}`);
+
+        product = data    
+    }
+
+
+
+
+
+    if ( !product ) {
+        return {
+            redirect: {
+                destination: '/admin/products',
+                permanent: false,
+            }
+        }
+    }
+    
+
+    return {
+        props: {
+            product
+        }
+    }
+}
 
 
 export default ProductAdminPage

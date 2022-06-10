@@ -1,7 +1,7 @@
 import { IType } from "./products";
 
 export interface IProductprueba {
-    id: number;
+    id?: number;
     description: string;
     images: Iimage[];
     inStock: number;
@@ -15,7 +15,7 @@ export interface IProductprueba {
 }
 
 export interface Iimage {
-    id:number;
+    id?:number;
     src:string
 }
 
