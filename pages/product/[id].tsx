@@ -32,6 +32,7 @@ const ProductPage:NextPage<Props> = ({product}) => {
     title: product.title,
     gender: product.gender,
     quantity: 1,
+    inStock:product.inStock
   })
 
   const onUpdateQuantity = ( quantity: number ) => {
@@ -171,12 +172,14 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
   //   }
   // );
 
-  const productosId = [...Array(13)].map((value, index) => `${index + 1}`)
+  const {data} = await happyPetApi.get('/producto/lista')
+  const productosId = data
+  // const productosId = [...Array(13)].map((value, index) => `${index + 1}`)
 
   
 
   return {
-    paths: productosId.map( (id) => ({  
+    paths: productosId.map( (id:string) => ({  
       params: {
         id
       }

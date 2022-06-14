@@ -69,14 +69,14 @@ export const CartProvider:FC = ({ children }) => {
     useEffect(() => {
         
         const numberOfItems = state.cart.reduce( ( prev, current ) => current.quantity + prev , 0 );
-        const subTotal = state.cart.reduce( ( prev, current ) => (current.price * current.quantity) + prev, 0 );
+        const total = state.cart.reduce( ( prev, current ) => (current.price * current.quantity) + prev, 0 );
         const taxRate =  Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
     
         const orderSummary = {
             numberOfItems,
-            subTotal,
-            tax: subTotal * taxRate,
-            total: subTotal * ( taxRate + 1 )
+            total, //total 
+            tax: total - (total/(taxRate + 1)), //precio del iva = total - (total/1.19)
+            subTotal: total/( taxRate + 1 ) //subtotal = total/1.19
         }
         dispatch({ type: '[Cart] - Update order summary', payload: orderSummary });
     }, [state.cart]);

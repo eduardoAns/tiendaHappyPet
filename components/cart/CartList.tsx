@@ -6,6 +6,7 @@ import { initialData } from '../../database/products';
 import { ItemCounter } from '../ui';
 import { ICartProduct, IOrderItem } from '../../interfaces';
 import { CartContext } from '../../context';
+import { useProductsPrueba } from '../../hooks';
 
 
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const CartList: FC<Props> = ({ editable = false, products }) => {
+
 
     const { cart, updateCartQuantity, removeCartProduct } = useContext(CartContext);
 
@@ -55,7 +57,7 @@ export const CartList: FC<Props> = ({ editable = false, products }) => {
                                 ? (
                                     <ItemCounter 
                                         currentValue={ product.quantity }
-                                        maxValue={ 10 } 
+                                        maxValue={ product.inStock } 
                                         updatedQuantity={ ( value ) => onNewCartQuantityValue(product, value )}
                                     />
                                 )

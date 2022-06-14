@@ -12,9 +12,9 @@ import { Iimage, IProduct, IProductprueba } from '../../../interfaces';
 import { happyPetApi } from '../../../api';
 
 
-const validTypes  = ['Juguetes','Cosmeticos','Accesorios']
+const validTypes  = ['Juguetes','Cosmetica','Accesorios']
 const validGender = ['M','F','U']
-const validSizes = ['XS','S','M','L','XL','U']
+const validSizes = ['XS','S','M','L','XL']
 
 
 interface FormData {
@@ -75,9 +75,13 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
             for( const file of target.files ) {
                 const formData = new FormData();
                 console.log(file)
-                formData.append('file', file);
-                // const { data } = await happyPetApi.post('/producto/upload', formData);
-                // setValue(`images`, [...getValues('images'), data.message], { shouldValidate: true });
+                formData.append('multipartFile', file);
+                const { data } = await happyPetApi.post('/producto/cloud/upload', formData);
+                console.log(data)
+                const imageInfo:Iimage ={
+                    src:data.secure_url,
+                }
+                setValue(`images`, [...getValues('images'), imageInfo], { shouldValidate: true });
             }
 
 
@@ -87,33 +91,39 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
     }
 
     const onDeleteImage = ( image: string) =>{
-        // setValue(
-        //     'images', 
-        //     getValues('images').filter( img => img !== image ),
-        //     { shouldValidate: true }
-        // );
+        setValue(
+            'images', 
+            getValues('images').filter( ({src}) => src !== image ),
+            { shouldValidate: true }
+        );
     }
 
+    const tiempoTranscurrido = Date.now();
+    const hoy = new Date(tiempoTranscurrido);
 
 
     const onSubmit = async( form: FormData ) => {
         
         if ( form.images.length < 2 ) return alert('Mínimo 2 imagenes');
         setIsSaving(true);
+        form.date = hoy.toDateString()
+    
+        console.log(form)
 
         try {
             const { data } = await happyPetApi({
-                url: '/admin/products',
-                method: form.id ? 'PUT': 'POST',  // si tenemos un _id, entonces actualizar, si no crear
+                url: '/producto',
+                method: form.id ? 'PUT': 'POST',  // si tenemos un id, entonces actualizar, si no crear
                 data: form
             });
+            router.replace('/admin/products/');
 
-            console.log({data});
-            if ( !form.id ) {
-                router.replace(`/admin/products/${ form.id }`);
-            } else {
-                setIsSaving(false)
-            }
+            
+            // if ( !form.id ) {
+            //     router.replace(`/admin/products`);
+            // } else {
+            //     setIsSaving(false)
+            // }
 
 
         } catch (error) {
@@ -180,6 +190,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             fullWidth 
                             sx={{ mb: 1 }}
                             { ...register('inStock', {
+                                setValueAs: v => parseInt(v),
                                 required: 'Este campo es requerido',
                                 min: { value: 0, message: 'Mínimo de valor cero' }
                             })}
@@ -194,6 +205,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             fullWidth 
                             sx={{ mb: 1 }}
                             { ...register('price', {
+                                setValueAs: v => parseInt(v),
                                 required: 'Este campo es requerido',
                                 min: { value: 0, message: 'Mínimo de valor cero' }
                             })}
@@ -313,7 +325,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                 label="Es necesario al 2 imagenes"
                                 color='error'
                                 variant='outlined'
-                                // sx={{ display: getValues('images').length < 2 ? 'flex': 'none' }}
+                                sx={{ display: getValues('images').length < 2 ? 'flex': 'none' }}
                             />
 
                             <Grid container spacing={2}>
@@ -324,14 +336,14 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                                 <CardMedia 
                                                     component='img'
                                                     className='fadeIn'
-                                                    image={ `/products/${ src }` }
+                                                    image={ src }
                                                     alt={ src }
                                                 />
                                                 <CardActions>
                                                     <Button 
                                                         fullWidth 
                                                         color="error"
-                                                        // onClick={()=> onDeleteImage(img.src)}
+                                                        onClick={()=> onDeleteImage(src)}
                                                     >
                                                         Borrar
                                                     </Button>

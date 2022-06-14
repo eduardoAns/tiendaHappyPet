@@ -10,6 +10,7 @@ export interface ICartProduct {
     gender: string;
     // gender: 'men'|'women'|'unisex';
     quantity: number;
+    inStock:number;
 }
 
 export interface ICartProductPrueba {
