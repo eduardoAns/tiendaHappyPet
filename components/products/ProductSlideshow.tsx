@@ -18,9 +18,9 @@ export const ProductSlideshow: FC<Props> = ({ images }) => {
     >
         {
             images.map( image =>  {
-                const url = `/products/${ image.src }`;
+                const url = image.src;
                 return (
-                    <div className={ styles['each-slide'] } key={ image.id }>
+                    <div className={ styles['each-slide'] } key={ image.public_id }>
                         <div style={{
                             backgroundImage: `url(${ url })`,
                             backgroundSize: 'cover'

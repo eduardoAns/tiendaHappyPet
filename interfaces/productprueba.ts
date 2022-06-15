@@ -15,7 +15,8 @@ export interface IProductprueba {
 }
 
 export interface Iimage {
-    id?:number;
+    public_id?:string;
+    idProducto?:string;
     src:string
 }
 

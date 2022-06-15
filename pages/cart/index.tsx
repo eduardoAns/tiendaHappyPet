@@ -30,7 +30,7 @@ const CartPage = () => {
         try {
         const {data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token!}})
         console.log(data)    
-        router.push('/checkout/summary');
+        router.push('/checkout/address');
     
         } catch (error) {
             router.push('/auth/login?p=/checkout/address') 

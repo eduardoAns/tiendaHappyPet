@@ -19,7 +19,7 @@ const CosmeticPage: NextPage = ( ) => {
 
    return (
     <ShopLayout title={'Tienda HappyPet - Cosmeticos'} pageDescription={'Encuentra los mejores cosmeticos para mascotas aquí'}>
-        <Typography variant='h1' component='h1'>Cosmetica</Typography>
+        <Typography variant='h1' component='h1'>cosmética</Typography>
         <Typography variant='h2' sx={{ mb: 1 }}>para mascotas </Typography>
 
         {

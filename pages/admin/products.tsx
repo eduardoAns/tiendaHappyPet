@@ -79,7 +79,7 @@ const ProductsPage = () => {
     
     const rows = data!.map( product => ({
         id: product.id,
-        img: `/products/${ product.images[1].src}`, 
+        img:product.images[1].src, 
         title: product.title,
         gender: product.gender,
         type: product.type,

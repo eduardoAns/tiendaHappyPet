@@ -14,7 +14,7 @@ import { happyPetApi } from '../../../api';
 
 const validTypes  = ['Juguetes','Cosmetica','Accesorios']
 const validGender = ['M','F','U']
-const validSizes = ['XS','S','M','L','XL']
+const validSizes = ['XS','S','M','L','XL','Na']
 
 
 interface FormData {
@@ -79,6 +79,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                 const { data } = await happyPetApi.post('/producto/cloud/upload', formData);
                 console.log(data)
                 const imageInfo:Iimage ={
+                    public_id:data.public_id,
                     src:data.secure_url,
                 }
                 setValue(`images`, [...getValues('images'), imageInfo], { shouldValidate: true });
@@ -90,19 +91,33 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
         }
     }
 
-    const onDeleteImage = ( image: string) =>{
+    const onDeleteImage = async ( image: Iimage) =>{
+
+
         setValue(
             'images', 
-            getValues('images').filter( ({src}) => src !== image ),
+            getValues('images').filter( ({src}) => src !== image.src ),
             { shouldValidate: true }
         );
+
+        await happyPetApi.delete(`/producto/cloud/delete/${image.public_id}`);
+
     }
 
-    const tiempoTranscurrido = Date.now();
-    const hoy = new Date(tiempoTranscurrido);
+    // const onDeleteImage = ( image: string) =>{
+    //     setValue(
+    //         'images', 
+    //         getValues('images').filter( ({src}) => src !== image ),
+    //         { shouldValidate: true }
+    //     );
+    // }
+
+    
 
 
     const onSubmit = async( form: FormData ) => {
+        const tiempoTranscurrido = Date.now();
+        const hoy = new Date(tiempoTranscurrido);
         
         if ( form.images.length < 2 ) return alert('Mínimo 2 imagenes');
         setIsSaving(true);
@@ -136,7 +151,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
     return (
         <AdminLayout 
             title={'Producto'} 
-            subTitle={`Editando: ${ product.title }`}
+            subTitle={product.title==='' ? 'Nuevo producto':`Editando: ${ product.title }`}
             // subTitle={`Editando: Hueso corestore`}
             icon={ <DriveFileRenameOutline /> }
         >
@@ -330,20 +345,20 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 
                             <Grid container spacing={2}>
                                 {
-                                    getValues('images').map( ({src}) => (
-                                        <Grid item xs={4} sm={3} key={src}>
+                                    getValues('images').map( (image) => (
+                                        <Grid item xs={4} sm={3} key={image.src}>
                                             <Card>
                                                 <CardMedia 
                                                     component='img'
                                                     className='fadeIn'
-                                                    image={ src }
-                                                    alt={ src }
+                                                    image={ image.src }
+                                                    alt={ image.src }
                                                 />
                                                 <CardActions>
                                                     <Button 
                                                         fullWidth 
                                                         color="error"
-                                                        onClick={()=> onDeleteImage(src)}
+                                                        onClick={()=> onDeleteImage(image)}
                                                     >
                                                         Borrar
                                                     </Button>
@@ -377,7 +392,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         // crear un producto
         const tempProduct: IProductprueba = {
             description: "",
-            images: [{src:"img1.jpg"},{src:"img2.jpg"}],
+            images: [],
             inStock: 0,
             price: 0,
             sizes: "",

@@ -6,7 +6,10 @@ interface Props {
     title: string;
 }
 
+
 export const AuthLayout: FC<Props> = ({ children, title  }) => {
+
+    
   return (
     <>
         <Head>

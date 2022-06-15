@@ -30,6 +30,8 @@ export const ShopLayout:FC<Props> = ({ children, title, pageDescription, imageFu
 
         </Head> 
 
+        
+
         <nav>
             <Navbar />
         </nav>
@@ -37,6 +39,7 @@ export const ShopLayout:FC<Props> = ({ children, title, pageDescription, imageFu
         <SideMenu />
 
         <main style={{
+            // backgroundImage:"url('https://media.istockphoto.com/vectors/paw-print-cat-dog-puppy-pet-trace-flat-style-stock-vector-vector-id1214700549')",
             margin: '80px auto',
             maxWidth: '1440px',
             padding: '0px 30px'
