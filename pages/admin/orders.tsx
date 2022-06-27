@@ -2,7 +2,9 @@
 import { ConfirmationNumberOutlined } from '@mui/icons-material'
 import { Chip, Grid } from '@mui/material'
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GetServerSideProps } from 'next';
 import useSWR from 'swr';
+import { happyPetApi } from '../../api';
 
 import { AdminLayout } from '../../components/layouts'
 import { IOrder, IUser } from '../../interfaces';
@@ -17,7 +19,7 @@ const columns:GridColDef[] = [
         field: 'isPaid',
         headerName: 'Pagada',
         renderCell: ({ row }: GridValueGetterParams) => {
-            return row.isPaid
+            return row.isPaid == "Pagada"
                 ? ( <Chip variant='outlined' label="Pagada" color="success" /> )
                 : ( <Chip variant='outlined' label="Pendiente" color="error" /> )
         }
@@ -43,19 +45,19 @@ const columns:GridColDef[] = [
 
 const OrdersPage = () => {
 
-    // const { data, error } = useSWR<IOrder[]>('/api/admin/orders');
+    const { data, error } = useSWR<IOrder[]>('https://happypet.herokuapp.com/api/orden');
 
-    // if ( !data && !error ) return (<></>);
+    if ( !data && !error ) return (<></>);
     
-    // const rows = data!.map( order => ({
-    //     id    : order._id,
-    //     email : (order.user as IUser).correo,
-    //     name  : (order.user as IUser).nombre,
-    //     total : order.total,
-    //     isPaid: order.isPaid,
-    //     noProducts: order.numberOfItems,
-    //     createdAt: order.createdAt,
-    // }));
+    const rows = data!.map( order => ({
+        id    : order.id,
+        email : (order.user as IUser).correo,
+        name  : `${(order.user as IUser).nombre} ${(order.user as IUser).apellido} `,
+        total : order.total,
+        isPaid: order.isPaid,
+        noProducts: order.numberOfItems,
+        createdAt: order.paidAt,
+    }));
 
 
   return (
@@ -64,21 +66,53 @@ const OrdersPage = () => {
         subTitle={'Mantenimiento de ordenes'}
         icon={ <ConfirmationNumberOutlined /> }
     >
-         {/* <Grid container className='fadeIn'>
+         <Grid container className='fadeIn'>
             <Grid item xs={12} sx={{ height:650, width: '100%' }}>
                 <DataGrid 
-                    rows={ 1 }
-                    // rows={ rows }
+                    rows={ rows }
                     columns={ columns }
                     pageSize={ 10 }
                     rowsPerPageOptions={ [10] }
                 />
 
             </Grid>
-        </Grid> */}
+        </Grid>
         
     </AdminLayout>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+
+    const { token = '' } = req.cookies;
+
+    let isValidToken = false;
+
+    try {
+        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const {rol} = data
+
+        if(rol == 'administrador'){
+            isValidToken = true;
+        }
+    } catch (error) {
+        isValidToken = false;
+    }
+
+    if ( !isValidToken ) {
+        return {
+            redirect: {
+                destination: '/auth/login?p=/admin/orders',
+                permanent: false,
+            }
+        }
+    }
+
+    return {
+        props: {
+            
+        }
+    }
 }
 
 export default OrdersPage

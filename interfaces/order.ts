@@ -2,8 +2,8 @@ import { ISize, IUser } from './';
 
 export interface IOrder {
 
-    _id? : string;
-    user?: IUser | string;
+    id? : number;
+    user?: IUser | number;
     orderItems: IOrderItem[];
     shippingAddress: ShippingAddress;
     paymentResult?: string;
@@ -13,19 +13,23 @@ export interface IOrder {
     tax          : number;
     total        : number;
 
-    isPaid  : boolean;
+    isPaid  : string;
     paidAt? : string;
+    idPaypal:string;
 }
 
 
 export interface IOrderItem {
-    _id      : string;
+    idOrden?:number;
+    id?:number;
+    idproducto: number;
     title    : string;
     size     : string;
     quantity : number;
     image    : string;
     price    : number;
     gender   : string;
+    inStock? :number;
 
 }
 

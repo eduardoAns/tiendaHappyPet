@@ -3,18 +3,19 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 
-import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, ListItem, Paper, Radio, RadioGroup, TextField } from '@mui/material';
+import { Box, Button, capitalize, Card, CardActions, CardMedia, Checkbox, Chip, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, Link, ListItem, Paper, Radio, RadioGroup, TextField } from '@mui/material';
 import { DriveFileRenameOutline, SaveOutlined, UploadOutlined } from '@mui/icons-material';
 
 import { AdminLayout } from '../../../components/layouts'
 import { Iimage, IProduct, IProductprueba } from '../../../interfaces';
 // import { dbProducts } from '../../../database';
 import { happyPetApi } from '../../../api';
+import NextLink from 'next/link';
 
 
 const validTypes  = ['Juguetes','Cosmetica','Accesorios']
 const validGender = ['M','F','U']
-const validSizes = ['XS','S','M','L','XL','Na']
+const validSizes = ['XS','S','M','L','XL']
 
 
 interface FormData {
@@ -28,7 +29,8 @@ interface FormData {
     title: string;
     type: string;
     gender: string;
-    date:string
+    date:string;
+    status:string
 }
 
 
@@ -121,7 +123,13 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
         
         if ( form.images.length < 2 ) return alert('Mínimo 2 imagenes');
         setIsSaving(true);
-        form.date = hoy.toDateString()
+        form.date = hoy.toDateString();
+        form.status="Activo";
+        
+        
+        
+        
+        
     
         console.log(form)
 
@@ -155,6 +163,11 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
             // subTitle={`Editando: Hueso corestore`}
             icon={ <DriveFileRenameOutline /> }
         >
+            <NextLink href='/admin/products' passHref>
+                <Link>
+                    <Button color='secondary'>Volver</Button>
+                </Link>
+            </NextLink>
             <form onSubmit={ handleSubmit( onSubmit ) }>
                 <Box display='flex' justifyContent='end' sx={{ mb: 1 }}>
                     <Button 
@@ -230,25 +243,7 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 
                         <Divider sx={{ my: 1 }} />
 
-                        <FormControl sx={{ mb: 1 }}>
-                            <FormLabel>Categoria</FormLabel>
-                            <RadioGroup
-                                row
-                                value={ getValues('type') }
-                                onChange={ ({ target })=> setValue('type', target.value, { shouldValidate: true }) }
-                            >
-                                {
-                                    validTypes.map( option => (
-                                        <FormControlLabel 
-                                            key={ option }
-                                            value={ option }
-                                            control={ <Radio color='secondary' /> }
-                                            label={ capitalize(option) }
-                                        />
-                                    ))
-                                }
-                            </RadioGroup>
-                        </FormControl>
+                        
 
                         <FormControl sx={{ mb: 1 }}>
                             <FormLabel>Género</FormLabel>
@@ -270,6 +265,29 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                             </RadioGroup>
                         </FormControl>
 
+                        <FormControl sx={{ mb: 1 }}>
+                            <FormLabel>Categoria</FormLabel>
+                            <RadioGroup
+                                row
+                                value={ getValues('type') }
+                                onChange={ ({ target })=> setValue('type', target.value, { shouldValidate: true }) }
+                            >
+                                {
+                                    validTypes.map( option => (
+                                        <FormControlLabel 
+                                            key={ option }
+                                            value={ option }
+                                            control={ <Radio color='secondary' /> }
+                                            label={ capitalize(option) }
+                                        />
+                                    ))
+                                }
+                            </RadioGroup>
+                        </FormControl>
+
+                       {
+                        (getValues('type') !== "Juguetes" 
+                        && 
                         <FormGroup>
                             <FormLabel>Tallas</FormLabel>
                                 <RadioGroup
@@ -291,7 +309,15 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
                                 }
                                 </RadioGroup>
  
-                        </FormGroup>
+                        </FormGroup>   
+                        
+                        
+                        )
+
+                       }
+                        
+
+                        
 
 
                     </Grid>
@@ -383,11 +409,35 @@ const ProductAdminPage:FC<Props> = ({ product }) => {
 // - Only if you need to pre-render a page whose data must be fetched at request time
 
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req,query }) => {
     
     const { id = '' } = query as { id: string };
-    let product: IProductprueba | null;
 
+    const { token = '' } = req.cookies;
+
+    let isValidToken = false;
+
+    try {
+        const{data} =  await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const {rol} = data
+
+        if(rol == 'administrador'){
+            isValidToken = true;
+        }
+    } catch (error) {
+        isValidToken = false;
+    }
+
+    if ( !isValidToken ) {
+        return {
+            redirect: {
+                destination: `/auth/login?p=/admin/products/${id}`,
+                permanent: false,
+            }
+        }
+    }
+
+    let product: IProductprueba | null;
     if ( id === 'new' ) {
         // crear un producto
         const tempProduct: IProductprueba = {
@@ -401,6 +451,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
             type: "",
             gender: "",
             date:"",
+            status:"",
         }
 
         product = tempProduct

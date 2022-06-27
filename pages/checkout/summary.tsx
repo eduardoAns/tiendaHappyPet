@@ -5,9 +5,10 @@ import { Link, Box, Button, Card, CardContent, Divider, Grid, Typography, Chip }
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList, OrderSummary } from '../../components/cart';
 import { useContext, useEffect, useState } from 'react';
-import { CartContext } from '../../context';
+import { AuthContext, CartContext } from '../../context';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import { happyPetApi } from '../../api';
 
 
 const SummaryPage = () => {
@@ -15,7 +16,8 @@ const SummaryPage = () => {
     const router = useRouter();
 
     const { shippingAddress, numberOfItems, createOrder } = useContext( CartContext );
-    console.log(shippingAddress);
+    const { user } = useContext( AuthContext );
+
     const [isPosting, setIsPosting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -27,17 +29,21 @@ const SummaryPage = () => {
 
     const onCreateOrder = async() => {
         setIsPosting(true);
+        // const userId: number = user?.id !== undefined ? user?.id : 0
+        const token = Cookies.get('token')!;
+        const {data}=await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+        const userId:string = data.id
+        console.log(userId)
+        const { message, hasError } = await createOrder(userId); 
+        if ( hasError ) {
+            setIsPosting(false);
+            setErrorMessage( message );
+            return;
+        }
 
-        // const { message, hasError } = await createOrder(); 
-
-        // if ( hasError ) {
-        //     setIsPosting(false);
-        //     setErrorMessage( message );
-        //     return;
-        // }
-
-        // router.replace(`/orders/${ message }`);
-        router.replace(`/orders/2`);
+        
+        router.replace(`/orders/${ message }`);
+        // router.replace(`/orders/2`);
 
 
     }

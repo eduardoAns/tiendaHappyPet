@@ -27,6 +27,8 @@ const getAddressFromCookies = ():FormData => {
         city      : Cookies.get('city') || '',
         phone     : Cookies.get('phone') || '',
     }
+
+    
 }
 
 const AddressPage = () => {

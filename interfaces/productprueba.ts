@@ -11,12 +11,13 @@ export interface IProductprueba {
     title: string;
     type: string;
     gender: string;
-    date:string
+    date:string;
+    status:string;
 }
 
 export interface Iimage {
     public_id?:string;
-    idProducto?:string;
+    idProducto?:number;
     src:string
 }
 

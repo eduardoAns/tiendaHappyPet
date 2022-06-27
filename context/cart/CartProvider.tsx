@@ -1,7 +1,7 @@
 import { FC, useEffect, useReducer } from 'react';
 import Cookie from 'js-cookie';
 
-import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
+import { ICartProduct, IOrder, IUser, ShippingAddress } from '../../interfaces';
 import { CartContext, cartReducer } from './';
 import { happyPetApi } from '../../api';
 
@@ -93,7 +93,7 @@ export const CartProvider:FC = ({ children }) => {
 
         //! Nivel Final
         //.some entrega un boolean
-        const productInCart = state.cart.some( p => p._id === product._id );
+        const productInCart = state.cart.some( p => p.id === product.id );
         if ( !productInCart ) return dispatch({ type: '[Cart] - Update products in cart', payload: [...state.cart, product ] })
 
         // const productInCartButDifferentSize = state.cart.some( p => p.id === product.id && p.size === product.size );
@@ -102,7 +102,7 @@ export const CartProvider:FC = ({ children }) => {
         //en este punto, el producto se asegura que si existe
         // Acumular
         const updatedProducts = state.cart.map( p => {
-            if ( p._id !== product._id ) return p;
+            if ( p.id !== product.id ) return p;
 
             // Actualizar la cantidad
             p.quantity += product.quantity;
@@ -132,15 +132,22 @@ export const CartProvider:FC = ({ children }) => {
         dispatch({ type: '[Cart] - Update Address', payload: address });
     }
 
-    const createOrder = async():Promise<{hasError:boolean; message: string; }> => {
+    const createOrder = async(user:string):Promise<{hasError:boolean; message: string; }> => {
 
         if ( !state.shippingAddress ) {
             throw new Error('No hay dirección de entrega');
         }
 
+        const tiempoTranscurrido = Date.now();
+        const hoy = new Date(tiempoTranscurrido);
+        const {data} = await happyPetApi.get(`usuario/${user}`)
+        const userId:IUser = data
         const body: IOrder = {
+            user:userId,
             orderItems: state.cart.map( p => ({
                 ...p,
+                id:undefined,
+                idproducto:p.id!,
                 size: p.size!
             })),
             shippingAddress: state.shippingAddress,
@@ -148,19 +155,25 @@ export const CartProvider:FC = ({ children }) => {
             subTotal: state.subTotal,
             tax: state.tax,
             total: state.total,
-            isPaid: false
+            isPaid: "Pendiente",
+            paidAt:hoy.toDateString(),
+            idPaypal:"idprueba",
+            
         }
+
+        console.log(body);
 
 
         try {
             
-            const { data } = await happyPetApi.post<IOrder>('/orders', body);
+            const {data} = await happyPetApi.post('/orden', body);
+            
+            console.log(data);
 
             dispatch({ type: '[Cart] - Order complete' });
-
             return {
                 hasError:false,
-                message: data._id!
+                message: data.toString()
             }
 
 
@@ -173,7 +186,7 @@ export const CartProvider:FC = ({ children }) => {
             // }
             return {
                 hasError: true,
-                message : 'error al realizar pago'
+                message : 'error al guardar la orden'
             }
         }
 

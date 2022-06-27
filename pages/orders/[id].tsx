@@ -1,28 +1,78 @@
 import NextLink from 'next/link';
-
-import { Link, Box, Card, CardContent, Divider, Grid, Typography, Chip } from '@mui/material';
+import { useState } from 'react';
+import { Link, Box, Card, CardContent, Divider, Grid, Typography, Chip, Button } from '@mui/material';
 import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
+import { PayPalButtons } from '@paypal/react-paypal-js';
+import { useRouter } from 'next/router';
 
 import { ShopLayout } from '../../components/layouts/ShopLayout';
 import { CartList, OrderSummary } from '../../components/cart';
 import { IOrder } from '../../interfaces';
 import { GetServerSideProps, NextPage } from 'next';
+import { happyPetApi } from '../../api';
+
+export type OrderResponseBody = {
+    id: string;
+    status:
+        | "COMPLETED"
+        | "SAVED"
+        | "APPROVED"
+        | "VOIDED"
+        | "PAYER_ACTION_REQUIRED";
+};
 
 interface Props {
     order: IOrder;
 }
 
+
+
 const OrderPage: NextPage<Props> = ({ order }) => {
 
-    // const { shippingAddress } = order;
+    const router = useRouter();    
+    const { shippingAddress } = order;
+    const [isPaying, setIsPaying] = useState(false);
+
+    const onOrderCompleted = async( details: OrderResponseBody ) => {
+        
+        if ( details.status !== 'COMPLETED' ) {
+            return alert('No hay pago en Paypal');
+        }
+
+        setIsPaying(true);
+
+        try {
+            
+            const { data } = await happyPetApi.post(`/orders/pay`, {
+                transactionId: details.id,
+                orderId: order.id
+            });
+
+            router.reload();
+
+        } catch (error) {
+            setIsPaying(false);
+            console.log(error);
+            alert('Error');
+        }
+
+    }
+
+    const navigateTo = () => {
+        setIsPaying(true)
+        // router.reload();
+    }
 
   return (
-    <ShopLayout title='Resumen de la orden 123671523' pageDescription={'Resumen de la orden'}>
-        <Typography variant='h1' component='h1'>Orden: ABC123</Typography>
+    <ShopLayout 
+        title={ `Resumen orden Id: ${ order.id }`} 
+        pageDescription={'Resumen de la orden'}>
+        <Typography variant='h1' component='h1'>Orden Id: { order.id }</Typography>
 
 
-        {/* {
-            order.isPaid
+        {
+            // order.isPaid
+            isPaying
             ? (
                 <Chip 
                     sx={{ my: 2 }}
@@ -41,69 +91,94 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                     icon={ <CreditCardOffOutlined /> }
                 />
             )
-        } */}
+        }
 
-        <Chip 
-            sx={{ my: 2 }}
-            label="Pendiente de pago"
-            variant='outlined'
-            color="error"
-            icon={ <CreditCardOffOutlined /> }
-        />
-
-        <Grid container>
+        
+        <Grid container className='fadeIn'>
             <Grid item xs={ 12 } sm={ 7 }>
-                <CartList />
-                {/* <CartList products={  order.orderItems } /> */}
+                {/* <CartList /> */}
+                <CartList products={ order.orderItems } />
             </Grid>
             <Grid item xs={ 12 } sm={ 5 }>
                 <Card className='summary-card'>
                     <CardContent>
-                        <Typography variant='h2'>Resumen (3 productos)</Typography>
+                    <Typography variant='h2'>Resumen ({ order.numberOfItems } { order.numberOfItems > 1 ? 'productos': 'producto'})</Typography>
                         <Divider sx={{ my:1 }} />
 
                         <Box display='flex' justifyContent='space-between'>
                             <Typography variant='subtitle1'>Dirección de entrega</Typography>
-                            <NextLink href='/checkout/address' passHref>
-                                <Link underline='always'>
-                                    Editar
-                                </Link>
-                            </NextLink>
                         </Box>
 
                         
-                        <Typography>Eduardo Ansa</Typography>
-                        <Typography> calle 2298</Typography>
-                        <Typography>Calama</Typography>
-                        <Typography>Chile</Typography>
-                        <Typography>+569 23123123</Typography>
+                        <Typography>{ shippingAddress.firstName } { shippingAddress.lastName }</Typography>
+                        <Typography>{ shippingAddress.address } { shippingAddress.address2 ? `, ${ shippingAddress.address2 }`: '' }</Typography>
+                        <Typography>{ shippingAddress.city }</Typography>
+                        <Typography>{ shippingAddress.phone }</Typography>
 
                         <Divider sx={{ my:1 }} />
 
-                        <Box display='flex' justifyContent='end'>
-                            <NextLink href='/cart' passHref>
-                                <Link underline='always'>
-                                    Editar
-                                </Link>
-                            </NextLink>
-                        </Box>
+                        
 
-                        <OrderSummary />
-                        {/* <OrderSummary 
+                        {/* <OrderSummary /> */}
+                        <OrderSummary 
                             orderValues={{
                                 numberOfItems: order.numberOfItems,
                                 subTotal: order.subTotal,
                                 total: order.total,
                                 tax: order.tax,
                             }} 
-                        /> */}
+                        />
 
                         <Box sx={{ mt: 3 }} display="flex" flexDirection='column'>
                             {/* TODO */}
 
-                            {/* {
-                                order.isPaid
-                                ? (
+                            {/* <Box display="flex"
+                                justifyContent="center"
+                                className='fadeIn'
+                                sx={{ display: isPaying ? 'flex': 'none' }}>
+                                <CircularProgress />
+                            </Box> */}
+
+                            {/* <Box flexDirection='column' sx={{ display: isPaying ? 'none': 'flex', flex: 1 }} >
+                                {
+                                    order.isPaid
+                                    ? (
+                                        <Chip 
+                                            sx={{ my: 2 }}
+                                            label="Orden ya fue pagada"
+                                            variant='outlined'
+                                            color="success"
+                                            icon={ <CreditScoreOutlined /> }
+                                        />
+
+                                    ):(
+                                        <PayPalButtons 
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                value: `${order.total}`,
+                                                            },
+                                                        },
+                                                    ],
+                                                });
+                                            }}
+                                            onApprove={(data, actions) => {
+                                                return actions.order!.capture().then((details) => {
+                                                    onOrderCompleted( details );
+                                                    // console.log({ details  })
+                                                    // const name = details.payer.name.given_name;
+                                                    // alert(`Transaction completed by ${name}`);
+                                                });
+                                            }}
+                                        />
+                                    )
+                                }
+                            </Box> */}
+                            {
+                                isPaying 
+                                ?(
                                     <Chip 
                                         sx={{ my: 2 }}
                                         label="Orden ya fue pagada"
@@ -111,20 +186,17 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                         color="success"
                                         icon={ <CreditScoreOutlined /> }
                                     />
-
                                 ):(
-                                    <h1>Pagar</h1>
-                                )
-                            } */}
-                            <h1>Pagar</h1>
 
-                            <Chip 
-                                sx={{ my: 2 }}
-                                label="Orden ya fue pagada"
-                                variant='outlined'
-                                color="success"
-                                icon={ <CreditScoreOutlined /> }
-                            />
+                                    <Button onClick={navigateTo}>
+                                        PAGAR
+                                    </Button>
+
+                                )
+                            }
+
+
+                            
                         </Box>
 
                     </CardContent>
@@ -137,55 +209,66 @@ const OrderPage: NextPage<Props> = ({ order }) => {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
-    
-//
-//     const { id = '' } = query;
-
-       //verifica si el usuario esta conectado y devuelve el id del usuario
-       
-//     const session:any = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
 
 
-//     if ( !session ) {
-//         return {
-//             redirect: {
-//                 destination: `/auth/login?p=/orders/${ id }`,
-//                 permanent: false,
-//             }
-//         }
-//     }
+       const { id = '' } = query;   
+       const { token = '' } = req.cookies;
+
+       let isValidToken = false;
+       let userId
+   
+       try {
+           const {data}=await happyPetApi.get('/validtoken', {'headers':{'Authorization': token}})
+           isValidToken = true;
+           userId = data.id
+           console.log(userId)
+           
+       } catch (error) {
+           isValidToken = false;
+       }
+   
+   
+       if ( !isValidToken ) {
+           return {
+               redirect: {
+                   destination: '/auth/login?p=/orders/history',
+                   permanent: false,
+               }
+           }
+       }
 
        //carga la orden desde la base de datos, a travez de la id de la query
 
-//     const order = await dbOrders.getOrderById( id.toString() );
+        const {data} = await happyPetApi.get(`/orden/${id}`)
+        const order = data
+        console.log(order.user.id)
 
-//     if ( !order ) {
-//         return {
-//             redirect: {
-//                 destination: '/orders/history',
-//                 permanent: false,
-//             }
-//         }
-//     }
-
-       //compara el id del token con el el id del usuario de la orden de compra ()
-
-//     if ( order.user !== session.user._id ) {
-//         return {
-//             redirect: {
-//                 destination: '/orders/history',
-//                 permanent: false,
-//             }
-//         }
-//     }
+    if ( !order ) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false,
+            }
+        }
+    }
 
 
-//     return {
-//         props: {
-//             order
-//         }
-//     }
-// }
+    if ( order.user.id != userId ) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false,
+            }
+        }
+    }
+
+
+    return {
+        props: {
+            order
+        }
+    }
+}
 
 export default OrderPage;
