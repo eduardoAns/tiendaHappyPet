@@ -47,7 +47,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
             setIsPaying(true);
             console.log(data)
             
-            // router.reload();
+            router.reload();
 
         } catch (error) {
             setIsPaying(false);
