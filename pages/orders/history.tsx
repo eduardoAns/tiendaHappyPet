@@ -21,9 +21,9 @@ const columns: GridColDef[] = [
         width: 200,
         renderCell: (params: GridValueGetterParams) => {
             return (
-                params.row.paid == 'Pagada'
-                    ? <Chip color="success" label="Pagada" variant='outlined' />
-                    : <Chip color="error" label="No pagada" variant='outlined' />
+                params.row.paid == 'Pagado'
+                    ? <Chip color="success" label="Pagado" variant='outlined' />
+                    : <Chip color="error" label="No pagado" variant='outlined' />
             )
         }
     },

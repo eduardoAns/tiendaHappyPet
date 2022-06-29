@@ -37,7 +37,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         
 
         {
-            !order.isPaid
+            order.isPaid=='Pagado'
             ? (
                 <Chip 
                     sx={{ my: 2 }}
@@ -98,7 +98,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 
                             <Box display='flex' flexDirection='column'>
                                 {
-                                    !order.isPaid
+                                    order.isPaid=='Pagado'
                                     ? (
                                         <Chip 
                                             sx={{ my: 2, flex: 1 }}

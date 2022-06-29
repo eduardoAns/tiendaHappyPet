@@ -33,22 +33,21 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     const { shippingAddress } = order;
     const [isPaying, setIsPaying] = useState(false);
 
-    const onOrderCompleted = async( details: OrderResponseBody ) => {
+    const onOrderCompleted = async( ordercompleted:IOrder ) => {
         
-        if ( details.status !== 'COMPLETED' ) {
-            return alert('No hay pago en Paypal');
-        }
+        // if ( details.status !== 'COMPLETED' ) {
+        //     return alert('No hay pago en Paypal');
+        // }
 
-        setIsPaying(true);
+        console.log(ordercompleted)
 
         try {
             
-            const { data } = await happyPetApi.post(`/orders/pay`, {
-                transactionId: details.id,
-                orderId: order.id
-            });
-
-            router.reload();
+            const {data}=await happyPetApi.post(`/orden/pay`, ordercompleted);
+            setIsPaying(true);
+            console.log(data)
+            
+            // router.reload();
 
         } catch (error) {
             setIsPaying(false);
@@ -58,10 +57,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 
     }
 
-    const navigateTo = () => {
-        setIsPaying(true)
-        // router.reload();
-    }
+    
 
   return (
     <ShopLayout 
@@ -72,7 +68,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
 
         {
             // order.isPaid
-            isPaying
+            order.isPaid == "Pagado"
             ? (
                 <Chip 
                     sx={{ my: 2 }}
@@ -177,7 +173,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                 }
                             </Box> */}
                             {
-                                isPaying 
+                                order.isPaid == "Pagado"
                                 ?(
                                     <Chip 
                                         sx={{ my: 2 }}
@@ -188,7 +184,9 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                     />
                                 ):(
 
-                                    <Button onClick={navigateTo}>
+                                    <Button
+                                        color='secondary' 
+                                        onClick={()=>onOrderCompleted(order)}>
                                         PAGAR
                                     </Button>
 
